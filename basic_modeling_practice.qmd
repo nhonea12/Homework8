@@ -1,0 +1,360 @@
+---
+title: "ST 558 Homework 8"
+author: "Nathan Honea"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+## Data Reading and EDA
+
+```{r}
+library(tidyverse)
+
+# read in the Seoul Bike Data
+bike_data <- read_csv("SeoulBikeData.csv", locale=locale(encoding="latin1"))
+
+# check for missing values
+colSums(is.na(bike_data))
+```
+
+The above code reads in the data, and then checks to see how many missing observation are in each column of our data. Luckily, there are no missing observations in any of our columns!
+
+```{r}
+# check the column types and column values
+str(bike_data)
+```
+
+The str() function allows us the examine the structure of our data. Here we can see which of our variables are numeric, and which ones are character. We can see the first few observations of each column, so we know whether the values makes sense in context, and we see the number of observations in each column, which is 8760 for every variable in our data set.
+
+```{r}
+# basic summaru stats of numeric variables
+mean(bike_data$`Rented Bike Count`)
+sd(bike_data$`Rented Bike Count`)
+```
+
+The mean number of rented bikes per hour in Seoul in 2018 was 704.6021. The standard deviation of this mean is 644.9975.
+
+```{r}
+mean(bike_data$Hour)
+sd(bike_data$Hour)
+```
+
+The mean of our hour variable is 11.5. The standard deviation is 6.922582. These number are not very useful in context.
+
+```{r}
+mean(bike_data$`Temperature(°C)`)
+sd(bike_data$`Temperature(°C)`)
+```
+
+The mean hourly temperature in Seoul in 2018 was 12.88292°C, with a standard deviation of 11.94483°C.
+
+```{r}
+mean(bike_data$`Humidity(%)`)
+sd(bike_data$`Humidity(%)`)
+```
+
+The mean hourly humidity in Seoul in 2018 was 58.22626%, with a standard deviation of 20.36241%.
+
+```{r}
+mean(bike_data$`Visibility (10m)`)
+sd(bike_data$`Visibility (10m)`)
+```
+
+The mean hourly visibility in Seoul in 2018 was 14368.26 meters, with a standard deviation of 6082.987 meters.
+
+```{r}
+mean(bike_data$`Dew point temperature(°C)`)
+sd(bike_data$`Dew point temperature(°C)`)
+```
+
+The mean hourly dew point temperature in Seoul in 2018 was 4.073813°C, with a standard deviation of 13.06037°C.
+
+```{r}
+mean(bike_data$`Solar Radiation (MJ/m2)`)
+sd(bike_data$`Solar Radiation (MJ/m2)`)
+```
+
+The mean hourly solar radiation level in Seoul in 2018 was 0.5691107 MJ/m2, with a standard deviation of 0.8687462 MJ/m2.
+
+```{r}
+mean(bike_data$`Rainfall(mm)`)
+sd(bike_data$`Rainfall(mm)`)
+```
+
+The mean hourly rainfall in Seoul in 2018 was 0.1486872mm, with a standard deviation of 1.128193mm.
+
+```{r}
+mean(bike_data$`Snowfall (cm)`)
+sd(bike_data$`Snowfall (cm)`)
+```
+
+The mean hourly snowfall in Seoul in 2018 was 0.07506849cm, with a standard deviation of 0.4367462cm.
+
+```{r}
+# check unique levels of categorical variables
+unique(bike_data$Seasons)
+
+unique(bike_data$Holiday)
+
+unique(bike_data$`Functioning Day`)
+
+# convert to Date variable to date type using lubridate package
+bike_data <- bike_data |> 
+  mutate(date = dmy(Date)) |> 
+  select(-Date)
+
+# convert character variables to factors
+bike_data <- bike_data |> 
+  mutate(
+    season = as.factor(Seasons),
+    holiday = as.factor(Holiday),
+    functioning_day = as.factor(`Functioning Day`)
+  ) |> 
+  select(-c(Seasons, Holiday, `Functioning Day`))
+
+# rename column names that need to be fixed
+bike_data |> names()
+
+bike_data <- bike_data |> 
+  rename(
+    "bike_count" = "Rented Bike Count",
+    "hour" = "Hour",
+    "temperature" = "Temperature(°C)",
+    "humidity" = "Humidity(%)",
+    "wind_speed" = "Wind speed (m/s)",
+    "visibility" = "Visibility (10m)",
+    "dew_point_temp" = "Dew point temperature(°C)",
+    "solar_radiation" = "Solar Radiation (MJ/m2)",
+    "rainfall" = "Rainfall(mm)",
+    "snowfall" = "Snowfall (cm)"
+  )
+
+bike_data |> names()
+```
+
+The above code makes the bike rental data easier to work with in several. When the data was read in, Date was included as a character variable, but after using the dmy() function from the lubridate package, the date variable (now lowercase) is of the date data type. 
+After looking at the unique levels of each other character variable, the remaining character variables have been stored as factors, with their names updated to be more compatible with R.
+
+All the numeric variables also had their names updated, so now every variable in our data set has lower, snake-case variable names.
+
+```{r}
+# summary stats across categorical variables (especially for rented bike count)
+# mean and standard deviation of bikes rented per hour grouped by season
+bike_data |> 
+  group_by(season) |> 
+  summarize(
+    mean_rentals = mean(bike_count),
+    sd_rentals = sd(bike_count)
+  )
+```
+
+The above table gives us the mean and standard deviation of hourly bike rentals in Seoul in 2018, grouped by the season.
+
+```{r}
+# mean and standard deviation of bikes rented per hour grouped by whether is it a holiday or not
+bike_data |> 
+  group_by(holiday) |> 
+  summarize(
+    mean_rentals = mean(bike_count),
+    sd_rentals = sd(bike_count)
+  )
+```
+
+The above table gives us the mean and standard deviation of hourly bike rentals in Seoul in 2018, grouped by whether it is a holiday.
+
+```{r}
+# mean and standard deviation of bikes rented per hour grouped by whether the bike rental place is available (will be mean and sd 0 when non-functional hours)
+bike_data |> 
+  group_by(functioning_day) |> 
+  summarize(
+    mean_rentals = mean(bike_count),
+    sd_rentals = sd(bike_count)
+  )
+```
+
+The above table gives us the mean and standard deviation of hourly bike rentals in Seoul in 2018, grouped by whether it is functioning hours. During non-functioning hours, it makes sense that there are no bike rentals to observe.
+
+```{r}
+# # mean and standard deviation of bikes rented per hour grouped by season and whether it is a holiday
+bike_data |> 
+  group_by(season, holiday) |> 
+  summarize(
+    mean_rentals = mean(bike_count),
+    sd_rentals = sd(bike_count)
+  )
+```
+
+The above table gives us the mean and standard deviation of hourly bike rentals in Seoul in 2018, grouped by both the season and whether it is a holiday.
+
+```{r}
+# summarize across days, so there is only one observation for each day
+bike_data <- bike_data |> 
+  group_by(date, season, holiday) |> 
+  summarize(
+    bike_count = sum(bike_count),
+    rainfall = sum(rainfall),
+    snowfall = sum(snowfall),
+    mean_temp = mean(temperature),
+    mean_humidity = mean(humidity),
+    mean_wind_speed = mean(wind_speed),
+    mean_visibility = mean(visibility),
+    mean_dew_point = mean(dew_point_temp),
+    mean_solar_rad = mean(solar_radiation)
+  )
+```
+
+The above code summarizes across days, so bike_data now stores daily bike rental data instead of hourly data. bike_count, rainfall, and snowfall now store the daily totals instead of hourly totals. All the other numeric variables tracking the weather store daily averages.
+
+```{r}
+# recreate above summary stats
+# mean and standard deviation of bikes rented per day grouped by season
+bike_data |> 
+  group_by(season) |> 
+  summarize(
+    mean_rentals = mean(bike_count),
+    sd_rentals = sd(bike_count)
+  )
+```
+
+The above table gives us the mean and standard deviation of daily bike rentals in Seoul in 2018, grouped by the season.
+
+```{r}
+# mean and standard deviation of bikes rented per day grouped by whether is it a holiday or not
+bike_data |> 
+  group_by(holiday) |> 
+  summarize(
+    mean_rentals = mean(bike_count),
+    sd_rentals = sd(bike_count)
+  )
+```
+
+The above table gives us the mean and standard deviation of daily bike rentals in Seoul in 2018, grouped by whether it is a holiday.
+
+```{r}
+# # mean and standard deviation of bikes rented per day grouped by season and whether it is a holiday
+bike_data |> 
+  group_by(season, holiday) |> 
+  summarize(
+    mean_rentals = mean(bike_count),
+    sd_rentals = sd(bike_count)
+  )
+```
+
+The above table gives us the mean and standard deviation of hourly bike rentals in Seoul in 2018, grouped by both the season and whether it is a holiday.
+
+```{r}
+# plot the data to explore relationships
+# plot rented bikes by day, grouped by holiday
+ggplot(data = bike_data, aes(x = date, y = bike_count, colour = holiday)) + 
+  geom_point() + 
+  labs(
+    title = "Daily Bike Rentals in Seoul",
+    subtitle = "Colored by Whether it is a Holiday",
+    x = "Date",
+    y = "Number of Bikes Rented"
+  ) + 
+  scale_color_discrete(name = "Holiday?")
+```
+
+The above scatter plot shows how many bikes were rented per day in Seoul in 2018, with the points colored by whether the day was a holiday.
+
+```{r}
+# plot rented bikes by rainfall, grouped by season
+ggplot(data = bike_data, aes(x = rainfall, y = bike_count, colour = season)) + 
+  geom_point() + 
+  labs(
+    title = "Daily Bike Rentals in Seoul",
+    subtitle = "Colored by Season",
+    x = "Rainfall (mm)",
+    y = "Number of Bikes Rented"
+  ) + 
+  scale_color_discrete(name = "Season:")
+```
+
+The above scatter plot shows how many bikes were rented in day based on the total rainfall that day. The points are colored by the season of the day. It makes sense that many of the points are at 0 on the x-axis, as many days have no rain at all.
+
+```{r}
+# plot rented bikes by snowfall, grouped by season
+ggplot(data = bike_data, aes(x = snowfall, y = bike_count, colour = season)) + 
+  geom_point() + 
+  labs(
+    title = "Daily Bike Rentals in Seoul",
+    subtitle = "Colored by Season",
+    x = "Snowfall (cm)",
+    y = "Number of Bikes Rented"
+  ) + 
+  scale_color_discrete(name = "Season:")
+```
+
+The above scatter plot shows how many bikes were rented in day based on the total snowfall that day. The points are colored by the season of the day. It makes sense that many of the points are at 0 on the x-axis, as many days have no snow at all. All of the points not at 0 on the x-axis are in the Autumn or Winter, with the majority in the Winter, which makes sense as these are the coldest months in the Northern Hemisphere.
+
+```{r}
+# plot rented bikes by humidity, grouped by season
+ggplot(data = bike_data, aes(x = mean_humidity, y = bike_count, colour = season)) + 
+  geom_point() + 
+  labs(
+    title = "Daily Bike Rentals in Seoul",
+    subtitle = "Colored by Season",
+    x = "Average Humidity for the Day (%)",
+    y = "Number of Bikes Rented"
+  ) + 
+  scale_color_discrete(name = "Season:")
+```
+
+The above scatter plot shows how many bikes were rented in day based on the average humidity that day. The points are colored by the season of the day. 
+
+```{r}
+# plot rented bikes by temperature, grouped by season
+ggplot(data = bike_data, aes(x = mean_temp, y = bike_count, colour = season)) + 
+  geom_point() + 
+  labs(
+    title = "Daily Bike Rentals in Seoul",
+    subtitle = "Colored by Season",
+    x = "Average Temperature for the Day (°C)",
+    y = "Number of Bikes Rented"
+  ) + 
+  scale_color_discrete(name = "Season:")
+```
+
+The above scatter plot shows how many bikes were rented in day based on the average temperature that day. The points are colored by the season of the day. It appears the there is a positive correlation between temperature and daily bike rentals, possibly because people are more likely to want to do outdoor activities like ride a bike when it is warmer outside. However, there may be some non-linear effect, where when the temperature gets too high, the number of bike rentals goes down, as people feel it is too hot.
+
+```{r}
+# plot rented bikes by solar radiation, grouped by season
+ggplot(data = bike_data, aes(x = mean_solar_rad, y = bike_count, colour = season)) + 
+  geom_point() + 
+  labs(
+    title = "Daily Bike Rentals in Seoul",
+    subtitle = "Colored by Season",
+    x = "Average Solar Radiation for the Day (MJ/m2)",
+    y = "Number of Bikes Rented"
+  ) + 
+  scale_color_discrete(name = "Season:")
+```
+
+The above scatter plot shows how many bikes were rented in day based on the average solar radiation that day. The points are colored by the season of the day. It appears the there is a positive correlation between solar radiation and daily bike rentals, possibly because people are more likely to want to do outdoor activities like ride a bike when it is sunny outside.
+
+```{r}
+# plot rented bikes by visibility, grouped by season
+ggplot(data = bike_data, aes(x = mean_visibility, y = bike_count, colour = season)) + 
+  geom_point() + 
+  labs(
+    title = "Daily Bike Rentals in Seoul",
+    subtitle = "Colored by Season",
+    x = "Average Visibility for the Day (10m)",
+    y = "Number of Bikes Rented"
+  ) + 
+  scale_color_discrete(name = "Season:")
+```
+
+The above scatter plot shows how many bikes were rented in day based on the average visibility that day. The points are colored by the season of the day. 
+
+```{r}
+# report correlations for all the numeric variables in the data
+cor(bike_data |> 
+      ungroup() |> 
+      select(where(is.numeric)), 
+    method = "pearson")
+```
+
+The above table is a correlation matrix of all the numeric variables in our data set. The most important row and column concerning bike rentals is the first row and first column (which give the same information). This row/column tells us the direction and strength of the linear relationships between daily bike rentals in Seoul and the other numeric variables in our relationship. Positive numbers indicate a positive relationship, while negative numbers indicate a negative, or inverse, relationship. The closer to 1 or -1, the stronger the linear relationship is. The closer to 0, the weaker the linear relationship is.
