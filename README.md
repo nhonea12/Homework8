@@ -1,2 +1,2 @@
 # Homework8
-Homework 7 assignment for ST 558 (601)
+Homework 8 assignment for ST 558 (601)
