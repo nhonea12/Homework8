@@ -430,16 +430,92 @@ In the above code, we created a function that allows us to do cross validation o
 
 
 ## Fitting MLR Models
+
+### Recipe 1:
 ```{r}
 # create some recipes with tidymodels
 # first recipe: 
 bike_recipe_1 <- recipe(bike_count ~ . , data = bike_train) |> 
+  #obtain day of week from data variable
   step_date(date, features = "dow", keep_original_cols = FALSE) |> 
+  # mutate to create factor examining if it is a weekday or weekend
   step_mutate(day_type = factor(ifelse(date_dow %in% c("Sat", "Sun"), "Weekend", "Weekday"))) |> 
+  # remove the day of week variable
   step_rm(date_dow) |> 
-  step_normalize(all_numeric(), -all_outcomes()) |> 
+  # normalize all numeric variables
+  step_normalize(all_numeric()) |> 
+  # create dummy variables for factors
   step_dummy(season, holiday, day_type) |> 
   prep(training = bike_train) |> 
   bake(bike_train)
 
+# view results
+bike_recipe_1
+
+# names of variables in recipe 1
+bike_recipe_1 |> names()
 ```
+
+Our first recipe with tidymodels has us create a day_type factor variable, created by pulling the day of the week from the date variable using step_date(), and then using step_mutate() to create the day_type variable. All of our numeric variables are standardized, including the outcome variable, bike_count.
+
+### Recipe 2:
+```{r}
+# second recipe: 
+bike_recipe_2 <- recipe(bike_count ~ . , data = bike_train) |> 
+  #obtain day of week from data variable
+  step_date(date, features = "dow", keep_original_cols = FALSE) |> 
+  # mutate to create factor examining if it is a weekday or weekend
+  step_mutate(day_type = factor(ifelse(date_dow %in% c("Sat", "Sun"), "Weekend", "Weekday"))) |> 
+  # remove the day of week variable
+  step_rm(date_dow) |> 
+  # normalize all numeric variables
+  step_normalize(all_numeric()) |> 
+  # create dummy variables for factors
+  step_dummy(season, holiday, day_type) |> 
+  # add in interacts between seasons and holiday, seasons and temp, and temp and rainfall
+  step_interact(terms = ~ starts_with("season")*holiday_No.Holiday + 
+                  starts_with("season")*mean_temp + 
+                  mean_temp*rainfall) |> 
+  prep(training = bike_train) |> 
+  bake(bike_train)
+
+# view results
+bike_recipe_2
+
+# names of variables in recipe 2
+bike_recipe_2 |> names()
+```
+
+Our second recipe is the same as the first, except it adds interaction terms! We have now added interaction terms for the interaction between the season dummy variables and the holiday dumm variable, the season dummy variables and temperature, and temperature and rainfall.
+
+### Recipe 3:
+```{r}
+# third recipe: 
+bike_recipe_3 <- recipe(bike_count ~ . , data = bike_train) |> 
+  #obtain day of week from data variable
+  step_date(date, features = "dow", keep_original_cols = FALSE) |> 
+  # mutate to create factor examining if it is a weekday or weekend
+  step_mutate(day_type = factor(ifelse(date_dow %in% c("Sat", "Sun"), "Weekend", "Weekday"))) |> 
+  # remove the day of week variable
+  step_rm(date_dow) |> 
+  # normalize all numeric variables
+  step_normalize(all_numeric()) |> 
+  # create dummy variables for factors
+  step_dummy(season, holiday, day_type) |> 
+  # add in quadratic terms for numeric predictors
+  step_poly(rainfall, snowfall, mean_temp, mean_humidity, mean_wind_speed, mean_dew_point, mean_solar_rad, mean_visibility) |> 
+    # add in interactions between seasons and holiday, seasons and temp, and temp and rainfall
+  step_interact(terms = ~ starts_with("season")*holiday_No.Holiday + 
+                  starts_with("season")*mean_temp_poly_1 + 
+                  mean_temp_poly_1*rainfall_poly_1) |> 
+  prep(training = bike_train) |> 
+  bake(bike_train)
+
+# view results
+bike_recipe_3
+
+# names of variables in recipe 3
+bike_recipe_3 |> names()
+```
+
+Our third and final recipe is similar to our second one, except now we have added quadratic terms for our numeric predictors variables.
