@@ -445,15 +445,18 @@ bike_recipe_1 <- recipe(bike_count ~ . , data = bike_train) |>
   # normalize all numeric variables
   step_normalize(all_numeric()) |> 
   # create dummy variables for factors
-  step_dummy(season, holiday, day_type) |> 
+  step_dummy(season, holiday, day_type)
+
+# view results
+bike_recipe_1 |> 
   prep(training = bike_train) |> 
   bake(bike_train)
 
-# view results
-bike_recipe_1
-
 # names of variables in recipe 1
-bike_recipe_1 |> names()
+bike_recipe_1  |> 
+  prep(training = bike_train) |> 
+  bake(bike_train) |> 
+  names()
 ```
 
 Our first recipe with tidymodels has us create a day_type factor variable, created by pulling the day of the week from the date variable using step_date(), and then using step_mutate() to create the day_type variable. All of our numeric variables are standardized, including the outcome variable, bike_count.
@@ -475,15 +478,18 @@ bike_recipe_2 <- recipe(bike_count ~ . , data = bike_train) |>
   # add in interacts between seasons and holiday, seasons and temp, and temp and rainfall
   step_interact(terms = ~ starts_with("season")*holiday_No.Holiday + 
                   starts_with("season")*mean_temp + 
-                  mean_temp*rainfall) |> 
+                  mean_temp*rainfall)
+
+# view results
+bike_recipe_2 |> 
   prep(training = bike_train) |> 
   bake(bike_train)
 
-# view results
-bike_recipe_2
-
 # names of variables in recipe 2
-bike_recipe_2 |> names()
+bike_recipe_2  |> 
+  prep(training = bike_train) |> 
+  bake(bike_train) |> 
+  names()
 ```
 
 Our second recipe is the same as the first, except it adds interaction terms! We have now added interaction terms for the interaction between the season dummy variables and the holiday dumm variable, the season dummy variables and temperature, and temperature and rainfall.
@@ -507,15 +513,86 @@ bike_recipe_3 <- recipe(bike_count ~ . , data = bike_train) |>
     # add in interactions between seasons and holiday, seasons and temp, and temp and rainfall
   step_interact(terms = ~ starts_with("season")*holiday_No.Holiday + 
                   starts_with("season")*mean_temp_poly_1 + 
-                  mean_temp_poly_1*rainfall_poly_1) |> 
+                  mean_temp_poly_1*rainfall_poly_1)
+
+# view results
+bike_recipe_3 |> 
   prep(training = bike_train) |> 
   bake(bike_train)
 
-# view results
-bike_recipe_3
-
 # names of variables in recipe 3
-bike_recipe_3 |> names()
+bike_recipe_3  |> 
+  prep(training = bike_train) |> 
+  bake(bike_train) |> 
+  names()
 ```
 
 Our third and final recipe is similar to our second one, except now we have added quadratic terms for our numeric predictors variables.
+
+
+### Fit and Compare the Models
+```{r}
+# set the engine for our models to be "lm"
+bike_mod <- linear_reg() |> 
+  set_engine("lm")
+
+# create a workflow that adds our recipe and our model with corresponding function
+bike_workflow_1 <- workflow() |>
+ add_recipe(bike_recipe_1) |>
+ add_model(bike_mod)
+bike_workflow_1
+
+bike_workflow_2 <- workflow() |>
+ add_recipe(bike_recipe_2) |>
+ add_model(bike_mod)
+bike_workflow_2
+
+bike_workflow_3 <- workflow() |>
+ add_recipe(bike_recipe_3) |>
+ add_model(bike_mod)
+bike_workflow_3
+
+# use a 10 fold CV in the training set
+bike_10_fold <- vfold_cv(bike_train, 10)
+
+# get the metrics for the 10 CV fit on recipe 1
+bike_CV_fits_1 <- bike_workflow_1 |>
+ fit_resamples(bike_10_fold)
+
+# get the metrics for the 10 CV fit on recipe 2
+bike_CV_fits_2 <- bike_workflow_2 |>
+ fit_resamples(bike_10_fold)
+
+# get the metrics for the 10 CV fit on recipe 3
+bike_CV_fits_3 <- bike_workflow_3 |>
+ fit_resamples(bike_10_fold)
+
+# view the metrics from the three models
+rbind(bike_CV_fits_1 |> collect_metrics(), 
+      bike_CV_fits_2 |> collect_metrics(), 
+      bike_CV_fits_3 |> collect_metrics())
+```
+
+Based on the root mean squared error (RMSE) of the training set, the best recipe of the three candidates is recipe 3, with a RMSE = 0.310. The next best is recipe 2, with a RMSE = 0.321. And in third is recipe 1, with a RMSE = 0.412.
+
+Since recipe 3 produced our 'best' model, we will test it with our test set.
+
+```{r}
+# fit the model from recipe 3
+bike_fit <- bike_workflow_3 |>
+ fit(bike_train)
+
+# see how the model performs on the test data
+bike_workflow_3 |>
+ last_fit(bike_split) |>
+ collect_metrics()
+
+# view the final model coefficient table
+bike_fit |> 
+  extract_fit_parsnip() |> 
+ tidy()
+```
+
+It appears our model does quite well on the test set, with a RMSE = 0.296, even lower than the training set.
+
+The final model's coefficient table is the last table output. It includes the parameter estimate, standard error, test statistic, and p-value of every parameter in the model.
