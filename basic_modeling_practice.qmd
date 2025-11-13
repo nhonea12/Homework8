@@ -10,6 +10,8 @@ editor_options:
 
 ```{r}
 library(tidyverse)
+#install.packages("tidymodels")
+library(tidymodels)
 
 # read in the Seoul Bike Data
 bike_data <- read_csv("SeoulBikeData.csv", locale=locale(encoding="latin1"))
@@ -358,3 +360,62 @@ cor(bike_data |>
 ```
 
 The above table is a correlation matrix of all the numeric variables in our data set. The most important row and column concerning bike rentals is the first row and first column (which give the same information). This row/column tells us the direction and strength of the linear relationships between daily bike rentals in Seoul and the other numeric variables in our relationship. Positive numbers indicate a positive relationship, while negative numbers indicate a negative, or inverse, relationship. The closer to 1 or -1, the stronger the linear relationship is. The closer to 0, the weaker the linear relationship is.
+
+## Split the Data
+```{r}
+# set seed so the results are replicable
+set.seed(2824)
+
+# split the data into a 75/25 training/test split, stratify the split by seasons
+bike_split <- initial_split(bike_data, prop = 0.75, strata = season)
+
+# save the 75% split as training
+bike_train <- training(bike_split)
+
+# save the 25% split as testing
+bike_test <- testing(bike_split)
+
+# view the training and testing sets
+bike_train
+bike_test
+```
+
+Above, we can see the heads of our training and test data sets. Using the tidymodels package, we split 75% of our bike rental data into the training set, which we will use to train our models, and the remaining 25% of the data makes up the test set, which will be used to test how effective our models are. The split was stratified by the season variable, so each data set will include a proportional number of observations from each season. Our training data set has 273 observations, while our test data set has 92.
+
+```{r}
+# want to create a 10 fold CV split on our training data
+# create a function to do so (same as in notes from github pages)
+get_cv_splits <- function(data, num_folds){
+  #get fold size
+  size_fold <- floor(nrow(data)/num_folds)
+  #get random indices to subset the data with
+  random_indices <- sample(1:nrow(data), size = nrow(data), replace = FALSE)
+  #create a list to save our folds in
+  folds <- list()
+  #now cycle through our random indices vector and take the appropriate observations to each fold
+  for(i in 1:num_folds){
+    if (i < num_folds) {
+      fold_index <- seq(from = (i-1)*size_fold +1, to = i*size_fold, by = 1)
+      folds[[i]] <- data[random_indices[fold_index], ]
+    } else {
+      fold_index <- seq(from = (i-1)*size_fold +1, to = length(random_indices), by = 1)
+      folds[[i]] <- data[random_indices[fold_index], ]
+    }
+  }
+  return(folds)
+}
+
+# save the results in folds
+folds <- get_cv_splits(bike_train, 10)
+
+# view the 10 fold CV
+folds
+```
+
+In the above code, we created a function that allows us to do cross validation on a data set with a certain number of folds. We then used this to do 10 fold cross validation on the training set from our bike rental data, with the heads of each fold returned above. Each fold contains 27 observations, except the tenth fold, which contains 30.
+
+
+## Fitting MLR Models
+```{r}
+
+```
