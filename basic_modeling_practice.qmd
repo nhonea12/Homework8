@@ -175,7 +175,19 @@ bike_data |>
   )
 ```
 
-The above table gives us the mean and standard deviation of hourly bike rentals in Seoul in 2018, grouped by whether it is functioning hours. During non-functioning hours, it makes sense that there are no bike rentals to observe.
+The above table gives us the mean and standard deviation of hourly bike rentals in Seoul in 2018, grouped by whether it is functioning hours. During non-functioning hours, it makes sense that there are no bike rentals to observe. Because of this, we will subset our data to only include results where functioning_day is "Yes".
+
+```{r}
+# number of observations before subset
+nrow(bike_data)
+
+# subset the data to only include observations where functioning_day is "Yes"
+bike_data <- bike_data |> 
+  filter(functioning_day == "Yes")
+
+# number of observations after subset
+nrow(bike_data)
+```
 
 ```{r}
 # # mean and standard deviation of bikes rented per hour grouped by season and whether it is a holiday
@@ -187,7 +199,9 @@ bike_data |>
   )
 ```
 
-The above table gives us the mean and standard deviation of hourly bike rentals in Seoul in 2018, grouped by both the season and whether it is a holiday.
+The above table gives us the mean and standard deviation of hourly bike rentals in Seoul in 2018, grouped by both the season and whether it is a holiday. 
+
+**Note:** This is now after we have subsetted based on the functioning_day variable
 
 ```{r}
 # summarize across days, so there is only one observation for each day
@@ -380,7 +394,7 @@ bike_train
 bike_test
 ```
 
-Above, we can see the heads of our training and test data sets. Using the tidymodels package, we split 75% of our bike rental data into the training set, which we will use to train our models, and the remaining 25% of the data makes up the test set, which will be used to test how effective our models are. The split was stratified by the season variable, so each data set will include a proportional number of observations from each season. Our training data set has 273 observations, while our test data set has 92.
+Above, we can see the heads of our training and test data sets. Using the tidymodels package, we split 75% of our bike rental data into the training set, which we will use to train our models, and the remaining 25% of the data makes up the test set, which will be used to test how effective our models are. The split was stratified by the season variable, so each data set will include a proportional number of observations from each season. Our training data set has 263 observations, while our test data set has 90
 
 ```{r}
 # want to create a 10 fold CV split on our training data
@@ -412,10 +426,20 @@ folds <- get_cv_splits(bike_train, 10)
 folds
 ```
 
-In the above code, we created a function that allows us to do cross validation on a data set with a certain number of folds. We then used this to do 10 fold cross validation on the training set from our bike rental data, with the heads of each fold returned above. Each fold contains 27 observations, except the tenth fold, which contains 30.
+In the above code, we created a function that allows us to do cross validation on a data set with a certain number of folds. We then used this to do 10 fold cross validation on the training set from our bike rental data, with the heads of each fold returned above. Each fold contains 26 observations, except the tenth fold, which contains 29.
 
 
 ## Fitting MLR Models
 ```{r}
+# create some recipes with tidymodels
+# first recipe: 
+bike_recipe_1 <- recipe(bike_count ~ . , data = bike_train) |> 
+  step_date(date, features = "dow", keep_original_cols = FALSE) |> 
+  step_mutate(day_type = factor(ifelse(date_dow %in% c("Sat", "Sun"), "Weekend", "Weekday"))) |> 
+  step_rm(date_dow) |> 
+  step_normalize(all_numeric(), -all_outcomes()) |> 
+  step_dummy(season, holiday, day_type) |> 
+  prep(training = bike_train) |> 
+  bake(bike_train)
 
 ```
