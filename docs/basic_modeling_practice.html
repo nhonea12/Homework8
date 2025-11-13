@@ -460,15 +460,31 @@ dbl (10): Rented Bike Count, Hour, Temperature(°C), Humidity(%), Wind speed ...
 2 Yes                     729.       642.</code></pre>
 </div>
 </div>
-<p>The above table gives us the mean and standard deviation of hourly bike rentals in Seoul in 2018, grouped by whether it is functioning hours. During non-functioning hours, it makes sense that there are no bike rentals to observe.</p>
+<p>The above table gives us the mean and standard deviation of hourly bike rentals in Seoul in 2018, grouped by whether it is functioning hours. During non-functioning hours, it makes sense that there are no bike rentals to observe. Because of this, we will subset our data to only include results where functioning_day is “Yes”.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # mean and standard deviation of bikes rented per hour grouped by season and whether it is a holiday</span></span>
-<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>bike_data <span class="sc">|&gt;</span> </span>
-<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, holiday) <span class="sc">|&gt;</span> </span>
-<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rentals =</span> <span class="fu">mean</span>(bike_count),</span>
-<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_rentals =</span> <span class="fu">sd</span>(bike_count)</span>
-<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># number of observations before subset</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(bike_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8760</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co"># subset the data to only include observations where functioning_day is "Yes"</span></span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>bike_data <span class="ot">&lt;-</span> bike_data <span class="sc">|&gt;</span> </span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(functioning_day <span class="sc">==</span> <span class="st">"Yes"</span>)</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a><span class="co"># number of observations after subset</span></span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(bike_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8465</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # mean and standard deviation of bikes rented per hour grouped by season and whether it is a holiday</span></span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>bike_data <span class="sc">|&gt;</span> </span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, holiday) <span class="sc">|&gt;</span> </span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rentals =</span> <span class="fu">mean</span>(bike_count),</span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_rentals =</span> <span class="fu">sd</span>(bike_count)</span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'season'. You can override using the
 `.groups` argument.</code></pre>
@@ -478,10 +494,10 @@ dbl (10): Rented Bike Count, Hour, Temperature(°C), Humidity(%), Wind speed ...
 # Groups:   season [4]
   season holiday    mean_rentals sd_rentals
   &lt;fct&gt;  &lt;fct&gt;             &lt;dbl&gt;      &lt;dbl&gt;
-1 Autumn Holiday            758.       660.
-2 Autumn No Holiday         823.       651.
+1 Autumn Holiday            948.       603.
+2 Autumn No Holiday         923.       618.
 3 Spring Holiday            635.       609.
-4 Spring No Holiday         733.       622.
+4 Spring No Holiday         750.       619.
 5 Summer Holiday           1022.       564.
 6 Summer No Holiday        1034.       693.
 7 Winter Holiday            157.       108.
@@ -489,21 +505,22 @@ dbl (10): Rented Bike Count, Hour, Temperature(°C), Humidity(%), Wind speed ...
 </div>
 </div>
 <p>The above table gives us the mean and standard deviation of hourly bike rentals in Seoul in 2018, grouped by both the season and whether it is a holiday.</p>
+<p><strong>Note:</strong> This is now after we have subsetted based on the functioning_day variable</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize across days, so there is only one observation for each day</span></span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>bike_data <span class="ot">&lt;-</span> bike_data <span class="sc">|&gt;</span> </span>
-<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(date, season, holiday) <span class="sc">|&gt;</span> </span>
-<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">bike_count =</span> <span class="fu">sum</span>(bike_count),</span>
-<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">rainfall =</span> <span class="fu">sum</span>(rainfall),</span>
-<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">snowfall =</span> <span class="fu">sum</span>(snowfall),</span>
-<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_temp =</span> <span class="fu">mean</span>(temperature),</span>
-<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_humidity =</span> <span class="fu">mean</span>(humidity),</span>
-<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_wind_speed =</span> <span class="fu">mean</span>(wind_speed),</span>
-<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_visibility =</span> <span class="fu">mean</span>(visibility),</span>
-<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_dew_point =</span> <span class="fu">mean</span>(dew_point_temp),</span>
-<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_solar_rad =</span> <span class="fu">mean</span>(solar_radiation)</span>
-<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize across days, so there is only one observation for each day</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>bike_data <span class="ot">&lt;-</span> bike_data <span class="sc">|&gt;</span> </span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(date, season, holiday) <span class="sc">|&gt;</span> </span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">bike_count =</span> <span class="fu">sum</span>(bike_count),</span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">rainfall =</span> <span class="fu">sum</span>(rainfall),</span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">snowfall =</span> <span class="fu">sum</span>(snowfall),</span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_temp =</span> <span class="fu">mean</span>(temperature),</span>
+<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_humidity =</span> <span class="fu">mean</span>(humidity),</span>
+<span id="cb70-10"><a href="#cb70-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_wind_speed =</span> <span class="fu">mean</span>(wind_speed),</span>
+<span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_visibility =</span> <span class="fu">mean</span>(visibility),</span>
+<span id="cb70-12"><a href="#cb70-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_dew_point =</span> <span class="fu">mean</span>(dew_point_temp),</span>
+<span id="cb70-13"><a href="#cb70-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_solar_rad =</span> <span class="fu">mean</span>(solar_radiation)</span>
+<span id="cb70-14"><a href="#cb70-14" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'date', 'season'. You can override using
 the `.groups` argument.</code></pre>
@@ -511,50 +528,50 @@ the `.groups` argument.</code></pre>
 </div>
 <p>The above code summarizes across days, so bike_data now stores daily bike rental data instead of hourly data. bike_count, rainfall, and snowfall now store the daily totals instead of hourly totals. All the other numeric variables tracking the weather store daily averages.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># recreate above summary stats</span></span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mean and standard deviation of bikes rented per day grouped by season</span></span>
-<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>bike_data <span class="sc">|&gt;</span> </span>
-<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season) <span class="sc">|&gt;</span> </span>
-<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rentals =</span> <span class="fu">mean</span>(bike_count),</span>
-<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_rentals =</span> <span class="fu">sd</span>(bike_count)</span>
-<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># recreate above summary stats</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="co"># mean and standard deviation of bikes rented per day grouped by season</span></span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>bike_data <span class="sc">|&gt;</span> </span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season) <span class="sc">|&gt;</span> </span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rentals =</span> <span class="fu">mean</span>(bike_count),</span>
+<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_rentals =</span> <span class="fu">sd</span>(bike_count)</span>
+<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 3
   season mean_rentals sd_rentals
   &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;
-1 Autumn       19670.      9398.
-2 Spring       17521.      8672.
+1 Autumn       22099.      6711.
+2 Spring       17910.      8357.
 3 Summer       24818.      7297.
 4 Winter        5413.      1808.</code></pre>
 </div>
 </div>
 <p>The above table gives us the mean and standard deviation of daily bike rentals in Seoul in 2018, grouped by the season.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mean and standard deviation of bikes rented per day grouped by whether is it a holiday or not</span></span>
-<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>bike_data <span class="sc">|&gt;</span> </span>
-<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(holiday) <span class="sc">|&gt;</span> </span>
-<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rentals =</span> <span class="fu">mean</span>(bike_count),</span>
-<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_rentals =</span> <span class="fu">sd</span>(bike_count)</span>
-<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mean and standard deviation of bikes rented per day grouped by whether is it a holiday or not</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>bike_data <span class="sc">|&gt;</span> </span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(holiday) <span class="sc">|&gt;</span> </span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rentals =</span> <span class="fu">mean</span>(bike_count),</span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_rentals =</span> <span class="fu">sd</span>(bike_count)</span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 3
   holiday    mean_rentals sd_rentals
   &lt;fct&gt;             &lt;dbl&gt;      &lt;dbl&gt;
-1 Holiday          11994.     10621.
-2 No Holiday       17165.     10191.</code></pre>
+1 Holiday          12700.     10504.
+2 No Holiday       17727.      9862.</code></pre>
 </div>
 </div>
 <p>The above table gives us the mean and standard deviation of daily bike rentals in Seoul in 2018, grouped by whether it is a holiday.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # mean and standard deviation of bikes rented per day grouped by season and whether it is a holiday</span></span>
-<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>bike_data <span class="sc">|&gt;</span> </span>
-<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, holiday) <span class="sc">|&gt;</span> </span>
-<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rentals =</span> <span class="fu">mean</span>(bike_count),</span>
-<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_rentals =</span> <span class="fu">sd</span>(bike_count)</span>
-<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # mean and standard deviation of bikes rented per day grouped by season and whether it is a holiday</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>bike_data <span class="sc">|&gt;</span> </span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, holiday) <span class="sc">|&gt;</span> </span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rentals =</span> <span class="fu">mean</span>(bike_count),</span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_rentals =</span> <span class="fu">sd</span>(bike_count)</span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'season'. You can override using the
 `.groups` argument.</code></pre>
@@ -564,10 +581,10 @@ the `.groups` argument.</code></pre>
 # Groups:   season [4]
   season holiday    mean_rentals sd_rentals
   &lt;fct&gt;  &lt;fct&gt;             &lt;dbl&gt;      &lt;dbl&gt;
-1 Autumn Holiday          18204.     11288.
-2 Autumn No Holiday       19756.      9349.
+1 Autumn Holiday          22754.      5642.
+2 Autumn No Holiday       22065.      6792.
 3 Spring Holiday          15247.     10917.
-4 Spring No Holiday       17597.      8653.
+4 Spring No Holiday       18002.      8322.
 5 Summer Holiday          24532.      8438.
 6 Summer No Holiday       24824.      7324.
 7 Winter Holiday           3759       1561.
@@ -576,37 +593,17 @@ the `.groups` argument.</code></pre>
 </div>
 <p>The above table gives us the mean and standard deviation of hourly bike rentals in Seoul in 2018, grouped by both the season and whether it is a holiday.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the data to explore relationships</span></span>
-<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a><span class="co"># plot rented bikes by day, grouped by holiday</span></span>
-<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bike_data, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> bike_count, <span class="at">colour =</span> holiday)) <span class="sc">+</span> </span>
-<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Daily Bike Rentals in Seoul"</span>,</span>
-<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colored by Whether it is a Holiday"</span>,</span>
-<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Date"</span>,</span>
-<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Bikes Rented"</span></span>
-<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
-<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">"Holiday?"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="basic_modeling_practice_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>The above scatter plot shows how many bikes were rented per day in Seoul in 2018, with the points colored by whether the day was a holiday.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot rented bikes by rainfall, grouped by season</span></span>
-<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bike_data, <span class="fu">aes</span>(<span class="at">x =</span> rainfall, <span class="at">y =</span> bike_count, <span class="at">colour =</span> season)) <span class="sc">+</span> </span>
-<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Daily Bike Rentals in Seoul"</span>,</span>
-<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colored by Season"</span>,</span>
-<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Rainfall (mm)"</span>,</span>
-<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Bikes Rented"</span></span>
-<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
-<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">"Season:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the data to explore relationships</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a><span class="co"># plot rented bikes by day, grouped by holiday</span></span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bike_data, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> bike_count, <span class="at">colour =</span> holiday)) <span class="sc">+</span> </span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Daily Bike Rentals in Seoul"</span>,</span>
+<span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colored by Whether it is a Holiday"</span>,</span>
+<span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Date"</span>,</span>
+<span id="cb79-9"><a href="#cb79-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Bikes Rented"</span></span>
+<span id="cb79-10"><a href="#cb79-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb79-11"><a href="#cb79-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">"Holiday?"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -615,18 +612,18 @@ the `.groups` argument.</code></pre>
 </div>
 </div>
 </div>
-<p>The above scatter plot shows how many bikes were rented in day based on the total rainfall that day. The points are colored by the season of the day. It makes sense that many of the points are at 0 on the x-axis, as many days have no rain at all.</p>
+<p>The above scatter plot shows how many bikes were rented per day in Seoul in 2018, with the points colored by whether the day was a holiday.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot rented bikes by snowfall, grouped by season</span></span>
-<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bike_data, <span class="fu">aes</span>(<span class="at">x =</span> snowfall, <span class="at">y =</span> bike_count, <span class="at">colour =</span> season)) <span class="sc">+</span> </span>
-<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Daily Bike Rentals in Seoul"</span>,</span>
-<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colored by Season"</span>,</span>
-<span id="cb77-7"><a href="#cb77-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Snowfall (cm)"</span>,</span>
-<span id="cb77-8"><a href="#cb77-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Bikes Rented"</span></span>
-<span id="cb77-9"><a href="#cb77-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
-<span id="cb77-10"><a href="#cb77-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">"Season:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot rented bikes by rainfall, grouped by season</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bike_data, <span class="fu">aes</span>(<span class="at">x =</span> rainfall, <span class="at">y =</span> bike_count, <span class="at">colour =</span> season)) <span class="sc">+</span> </span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Daily Bike Rentals in Seoul"</span>,</span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colored by Season"</span>,</span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Rainfall (mm)"</span>,</span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Bikes Rented"</span></span>
+<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">"Season:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -635,18 +632,18 @@ the `.groups` argument.</code></pre>
 </div>
 </div>
 </div>
-<p>The above scatter plot shows how many bikes were rented in day based on the total snowfall that day. The points are colored by the season of the day. It makes sense that many of the points are at 0 on the x-axis, as many days have no snow at all. All of the points not at 0 on the x-axis are in the Autumn or Winter, with the majority in the Winter, which makes sense as these are the coldest months in the Northern Hemisphere.</p>
+<p>The above scatter plot shows how many bikes were rented in day based on the total rainfall that day. The points are colored by the season of the day. It makes sense that many of the points are at 0 on the x-axis, as many days have no rain at all.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot rented bikes by humidity, grouped by season</span></span>
-<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bike_data, <span class="fu">aes</span>(<span class="at">x =</span> mean_humidity, <span class="at">y =</span> bike_count, <span class="at">colour =</span> season)) <span class="sc">+</span> </span>
-<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Daily Bike Rentals in Seoul"</span>,</span>
-<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colored by Season"</span>,</span>
-<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Average Humidity for the Day (%)"</span>,</span>
-<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Bikes Rented"</span></span>
-<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
-<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">"Season:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot rented bikes by snowfall, grouped by season</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bike_data, <span class="fu">aes</span>(<span class="at">x =</span> snowfall, <span class="at">y =</span> bike_count, <span class="at">colour =</span> season)) <span class="sc">+</span> </span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Daily Bike Rentals in Seoul"</span>,</span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colored by Season"</span>,</span>
+<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Snowfall (cm)"</span>,</span>
+<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Bikes Rented"</span></span>
+<span id="cb81-9"><a href="#cb81-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb81-10"><a href="#cb81-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">"Season:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -655,18 +652,18 @@ the `.groups` argument.</code></pre>
 </div>
 </div>
 </div>
-<p>The above scatter plot shows how many bikes were rented in day based on the average humidity that day. The points are colored by the season of the day.</p>
+<p>The above scatter plot shows how many bikes were rented in day based on the total snowfall that day. The points are colored by the season of the day. It makes sense that many of the points are at 0 on the x-axis, as many days have no snow at all. All of the points not at 0 on the x-axis are in the Autumn or Winter, with the majority in the Winter, which makes sense as these are the coldest months in the Northern Hemisphere.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot rented bikes by temperature, grouped by season</span></span>
-<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bike_data, <span class="fu">aes</span>(<span class="at">x =</span> mean_temp, <span class="at">y =</span> bike_count, <span class="at">colour =</span> season)) <span class="sc">+</span> </span>
-<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Daily Bike Rentals in Seoul"</span>,</span>
-<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colored by Season"</span>,</span>
-<span id="cb79-7"><a href="#cb79-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Average Temperature for the Day (°C)"</span>,</span>
-<span id="cb79-8"><a href="#cb79-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Bikes Rented"</span></span>
-<span id="cb79-9"><a href="#cb79-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
-<span id="cb79-10"><a href="#cb79-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">"Season:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot rented bikes by humidity, grouped by season</span></span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bike_data, <span class="fu">aes</span>(<span class="at">x =</span> mean_humidity, <span class="at">y =</span> bike_count, <span class="at">colour =</span> season)) <span class="sc">+</span> </span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Daily Bike Rentals in Seoul"</span>,</span>
+<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colored by Season"</span>,</span>
+<span id="cb82-7"><a href="#cb82-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Average Humidity for the Day (%)"</span>,</span>
+<span id="cb82-8"><a href="#cb82-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Bikes Rented"</span></span>
+<span id="cb82-9"><a href="#cb82-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb82-10"><a href="#cb82-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">"Season:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -675,18 +672,18 @@ the `.groups` argument.</code></pre>
 </div>
 </div>
 </div>
-<p>The above scatter plot shows how many bikes were rented in day based on the average temperature that day. The points are colored by the season of the day. It appears the there is a positive correlation between temperature and daily bike rentals, possibly because people are more likely to want to do outdoor activities like ride a bike when it is warmer outside. However, there may be some non-linear effect, where when the temperature gets too high, the number of bike rentals goes down, as people feel it is too hot.</p>
+<p>The above scatter plot shows how many bikes were rented in day based on the average humidity that day. The points are colored by the season of the day.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot rented bikes by solar radiation, grouped by season</span></span>
-<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bike_data, <span class="fu">aes</span>(<span class="at">x =</span> mean_solar_rad, <span class="at">y =</span> bike_count, <span class="at">colour =</span> season)) <span class="sc">+</span> </span>
-<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Daily Bike Rentals in Seoul"</span>,</span>
-<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colored by Season"</span>,</span>
-<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Average Solar Radiation for the Day (MJ/m2)"</span>,</span>
-<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Bikes Rented"</span></span>
-<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
-<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">"Season:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot rented bikes by temperature, grouped by season</span></span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bike_data, <span class="fu">aes</span>(<span class="at">x =</span> mean_temp, <span class="at">y =</span> bike_count, <span class="at">colour =</span> season)) <span class="sc">+</span> </span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Daily Bike Rentals in Seoul"</span>,</span>
+<span id="cb83-6"><a href="#cb83-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colored by Season"</span>,</span>
+<span id="cb83-7"><a href="#cb83-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Average Temperature for the Day (°C)"</span>,</span>
+<span id="cb83-8"><a href="#cb83-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Bikes Rented"</span></span>
+<span id="cb83-9"><a href="#cb83-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb83-10"><a href="#cb83-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">"Season:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -695,18 +692,18 @@ the `.groups` argument.</code></pre>
 </div>
 </div>
 </div>
-<p>The above scatter plot shows how many bikes were rented in day based on the average solar radiation that day. The points are colored by the season of the day. It appears the there is a positive correlation between solar radiation and daily bike rentals, possibly because people are more likely to want to do outdoor activities like ride a bike when it is sunny outside.</p>
+<p>The above scatter plot shows how many bikes were rented in day based on the average temperature that day. The points are colored by the season of the day. It appears the there is a positive correlation between temperature and daily bike rentals, possibly because people are more likely to want to do outdoor activities like ride a bike when it is warmer outside. However, there may be some non-linear effect, where when the temperature gets too high, the number of bike rentals goes down, as people feel it is too hot.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot rented bikes by visibility, grouped by season</span></span>
-<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bike_data, <span class="fu">aes</span>(<span class="at">x =</span> mean_visibility, <span class="at">y =</span> bike_count, <span class="at">colour =</span> season)) <span class="sc">+</span> </span>
-<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Daily Bike Rentals in Seoul"</span>,</span>
-<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colored by Season"</span>,</span>
-<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Average Visibility for the Day (10m)"</span>,</span>
-<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Bikes Rented"</span></span>
-<span id="cb81-9"><a href="#cb81-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
-<span id="cb81-10"><a href="#cb81-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">"Season:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot rented bikes by solar radiation, grouped by season</span></span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bike_data, <span class="fu">aes</span>(<span class="at">x =</span> mean_solar_rad, <span class="at">y =</span> bike_count, <span class="at">colour =</span> season)) <span class="sc">+</span> </span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Daily Bike Rentals in Seoul"</span>,</span>
+<span id="cb84-6"><a href="#cb84-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colored by Season"</span>,</span>
+<span id="cb84-7"><a href="#cb84-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Average Solar Radiation for the Day (MJ/m2)"</span>,</span>
+<span id="cb84-8"><a href="#cb84-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Bikes Rented"</span></span>
+<span id="cb84-9"><a href="#cb84-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb84-10"><a href="#cb84-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">"Season:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -715,34 +712,54 @@ the `.groups` argument.</code></pre>
 </div>
 </div>
 </div>
+<p>The above scatter plot shows how many bikes were rented in day based on the average solar radiation that day. The points are colored by the season of the day. It appears the there is a positive correlation between solar radiation and daily bike rentals, possibly because people are more likely to want to do outdoor activities like ride a bike when it is sunny outside.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot rented bikes by visibility, grouped by season</span></span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> bike_data, <span class="fu">aes</span>(<span class="at">x =</span> mean_visibility, <span class="at">y =</span> bike_count, <span class="at">colour =</span> season)) <span class="sc">+</span> </span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb85-5"><a href="#cb85-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Daily Bike Rentals in Seoul"</span>,</span>
+<span id="cb85-6"><a href="#cb85-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Colored by Season"</span>,</span>
+<span id="cb85-7"><a href="#cb85-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Average Visibility for the Day (10m)"</span>,</span>
+<span id="cb85-8"><a href="#cb85-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Bikes Rented"</span></span>
+<span id="cb85-9"><a href="#cb85-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb85-10"><a href="#cb85-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name =</span> <span class="st">"Season:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="basic_modeling_practice_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>The above scatter plot shows how many bikes were rented in day based on the average visibility that day. The points are colored by the season of the day.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="co"># report correlations for all the numeric variables in the data</span></span>
-<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(bike_data <span class="sc">|&gt;</span> </span>
-<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(<span class="fu">where</span>(is.numeric)), </span>
-<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">"pearson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="co"># report correlations for all the numeric variables in the data</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(bike_data <span class="sc">|&gt;</span> </span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(<span class="fu">where</span>(is.numeric)), </span>
+<span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">"pearson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                 bike_count    rainfall    snowfall   mean_temp mean_humidity
-bike_count       1.00000000 -0.21425244 -0.24083601  0.69982423    0.02815752
-rainfall        -0.21425244  1.00000000 -0.02249252  0.13981161    0.52824072
-snowfall        -0.24083601 -0.02249252  1.00000000 -0.26795142    0.06424711
-mean_temp        0.69982423  0.13981161 -0.26795142  1.00000000    0.40146073
-mean_humidity    0.02815752  0.52824072  0.06424711  0.40146073    1.00000000
-mean_wind_speed -0.17485945 -0.08107366  0.02079190 -0.25895565   -0.22416837
-mean_visibility  0.14537586 -0.21828398 -0.10129611  0.01057752   -0.55648011
-mean_dew_point   0.60264807  0.26064386 -0.21082326  0.96261370    0.63026510
-mean_solar_rad   0.68406924 -0.32323141 -0.23149054  0.54348190   -0.27353406
+<pre><code>                 bike_count    rainfall    snowfall    mean_temp mean_humidity
+bike_count       1.00000000 -0.23910905 -0.26529110  0.753076732    0.03588697
+rainfall        -0.23910905  1.00000000 -0.02313404  0.144517274    0.52864263
+snowfall        -0.26529110 -0.02313404  1.00000000 -0.266963662    0.06539191
+mean_temp        0.75307673  0.14451727 -0.26696366  1.000000000    0.40416749
+mean_humidity    0.03588697  0.52864263  0.06539191  0.404167486    1.00000000
+mean_wind_speed -0.19288142 -0.10167578  0.02088156 -0.260721792   -0.23425778
+mean_visibility  0.16599375 -0.22199387 -0.10188902  0.002336683   -0.55917733
+mean_dew_point   0.65047655  0.26456621 -0.20955286  0.962796255    0.63204729
+mean_solar_rad   0.73589290 -0.32270413 -0.23343056  0.550274301   -0.27444967
                 mean_wind_speed mean_visibility mean_dew_point mean_solar_rad
-bike_count          -0.17485945      0.14537586      0.6026481      0.6840692
-rainfall            -0.08107366     -0.21828398      0.2606439     -0.3232314
-snowfall             0.02079190     -0.10129611     -0.2108233     -0.2314905
-mean_temp           -0.25895565      0.01057752      0.9626137      0.5434819
-mean_humidity       -0.22416837     -0.55648011      0.6302651     -0.2735341
-mean_wind_speed      1.00000000      0.19038959     -0.2841044      0.1076893
-mean_visibility      0.19038959      1.00000000     -0.1458334      0.2646339
-mean_dew_point      -0.28410440     -0.14583339      1.0000000      0.3774974
-mean_solar_rad       0.10768927      0.26463391      0.3774974      1.0000000</code></pre>
+bike_count          -0.19288142     0.165993749      0.6504765     0.73589290
+rainfall            -0.10167578    -0.221993866      0.2645662    -0.32270413
+snowfall             0.02088156    -0.101889019     -0.2095529    -0.23343056
+mean_temp           -0.26072179     0.002336683      0.9627963     0.55027430
+mean_humidity       -0.23425778    -0.559177334      0.6320473    -0.27444967
+mean_wind_speed      1.00000000     0.206022636     -0.2877032     0.09612635
+mean_visibility      0.20602264     1.000000000     -0.1535516     0.27139591
+mean_dew_point      -0.28770322    -0.153551591      1.0000000     0.38315713
+mean_solar_rad       0.09612635     0.271395906      0.3831571     1.00000000</code></pre>
 </div>
 </div>
 <p>The above table is a correlation matrix of all the numeric variables in our data set. The most important row and column concerning bike rentals is the first row and first column (which give the same information). This row/column tells us the direction and strength of the linear relationships between daily bike rentals in Seoul and the other numeric variables in our relationship. Positive numbers indicate a positive relationship, while negative numbers indicate a negative, or inverse, relationship. The closer to 1 or -1, the stronger the linear relationship is. The closer to 0, the weaker the linear relationship is.</p>
@@ -750,23 +767,23 @@ mean_solar_rad       0.10768927      0.26463391      0.3774974      1.0000000</c
 <section id="split-the-data" class="level2">
 <h2 class="anchored" data-anchor-id="split-the-data">Split the Data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set seed so the results are replicable</span></span>
-<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2824</span>)</span>
-<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a><span class="co"># split the data into a 75/25 training/test split, stratify the split by seasons</span></span>
-<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a>bike_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(bike_data, <span class="at">prop =</span> <span class="fl">0.75</span>, <span class="at">strata =</span> season)</span>
-<span id="cb84-6"><a href="#cb84-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb84-7"><a href="#cb84-7" aria-hidden="true" tabindex="-1"></a><span class="co"># save the 75% split as training</span></span>
-<span id="cb84-8"><a href="#cb84-8" aria-hidden="true" tabindex="-1"></a>bike_train <span class="ot">&lt;-</span> <span class="fu">training</span>(bike_split)</span>
-<span id="cb84-9"><a href="#cb84-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb84-10"><a href="#cb84-10" aria-hidden="true" tabindex="-1"></a><span class="co"># save the 25% split as testing</span></span>
-<span id="cb84-11"><a href="#cb84-11" aria-hidden="true" tabindex="-1"></a>bike_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(bike_split)</span>
-<span id="cb84-12"><a href="#cb84-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb84-13"><a href="#cb84-13" aria-hidden="true" tabindex="-1"></a><span class="co"># view the training and testing sets</span></span>
-<span id="cb84-14"><a href="#cb84-14" aria-hidden="true" tabindex="-1"></a>bike_train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set seed so the results are replicable</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2824</span>)</span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a><span class="co"># split the data into a 75/25 training/test split, stratify the split by seasons</span></span>
+<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>bike_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(bike_data, <span class="at">prop =</span> <span class="fl">0.75</span>, <span class="at">strata =</span> season)</span>
+<span id="cb88-6"><a href="#cb88-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-7"><a href="#cb88-7" aria-hidden="true" tabindex="-1"></a><span class="co"># save the 75% split as training</span></span>
+<span id="cb88-8"><a href="#cb88-8" aria-hidden="true" tabindex="-1"></a>bike_train <span class="ot">&lt;-</span> <span class="fu">training</span>(bike_split)</span>
+<span id="cb88-9"><a href="#cb88-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-10"><a href="#cb88-10" aria-hidden="true" tabindex="-1"></a><span class="co"># save the 25% split as testing</span></span>
+<span id="cb88-11"><a href="#cb88-11" aria-hidden="true" tabindex="-1"></a>bike_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(bike_split)</span>
+<span id="cb88-12"><a href="#cb88-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-13"><a href="#cb88-13" aria-hidden="true" tabindex="-1"></a><span class="co"># view the training and testing sets</span></span>
+<span id="cb88-14"><a href="#cb88-14" aria-hidden="true" tabindex="-1"></a>bike_train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 273 × 12
-# Groups:   date, season [273]
+<pre><code># A tibble: 263 × 12
+# Groups:   date, season [263]
    date       season holiday    bike_count rainfall snowfall mean_temp
    &lt;date&gt;     &lt;fct&gt;  &lt;fct&gt;           &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
  1 2018-09-01 Autumn No Holiday      26010      0          0      25.5
@@ -779,258 +796,628 @@ mean_solar_rad       0.10768927      0.26463391      0.3774974      1.0000000</c
  8 2018-09-12 Autumn No Holiday      31809      0          0      22.5
  9 2018-09-13 Autumn No Holiday      30991      0          0      23.4
 10 2018-09-14 Autumn No Holiday      28199      0.5        0      23.5
-# ℹ 263 more rows
+# ℹ 253 more rows
 # ℹ 5 more variables: mean_humidity &lt;dbl&gt;, mean_wind_speed &lt;dbl&gt;,
 #   mean_visibility &lt;dbl&gt;, mean_dew_point &lt;dbl&gt;, mean_solar_rad &lt;dbl&gt;</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>bike_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>bike_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 92 × 12
-# Groups:   date, season [92]
+<pre><code># A tibble: 90 × 12
+# Groups:   date, season [90]
    date       season holiday    bike_count rainfall snowfall mean_temp
    &lt;date&gt;     &lt;fct&gt;  &lt;fct&gt;           &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
- 1 2017-12-07 Winter No Holiday       8549      0       10.4      1.09
- 2 2017-12-14 Winter No Holiday       6398      0        0       -6.87
- 3 2017-12-20 Winter No Holiday       4568      0.2     48.3     -4.29
- 4 2017-12-24 Winter Holiday          2014     20        0        3.46
- 5 2017-12-25 Winter Holiday          3966      0        0       -2.09
- 6 2017-12-28 Winter No Holiday       6594      0        0       -2.58
- 7 2018-01-03 Winter No Holiday       6512      0        0       -4.48
- 8 2018-01-04 Winter No Holiday       6453      0        0       -4.8 
- 9 2018-01-06 Winter No Holiday       5180      0        0       -2.75
-10 2018-01-08 Winter No Holiday       5711      0.9      4.5      1.42
-# ℹ 82 more rows
+ 1 2017-12-04 Winter No Holiday       8729      0.1      0      -0.304
+ 2 2017-12-14 Winter No Holiday       6398      0        0      -6.87 
+ 3 2017-12-15 Winter No Holiday       7198      0        0      -3.28 
+ 4 2017-12-18 Winter No Holiday       2620      3.4     59.7    -1.97 
+ 5 2017-12-20 Winter No Holiday       4568      0.2     48.3    -4.29 
+ 6 2017-12-22 Winter Holiday          7184      0        7.7     2.76 
+ 7 2017-12-24 Winter Holiday          2014     20        0       3.46 
+ 8 2017-12-25 Winter Holiday          3966      0        0      -2.09 
+ 9 2017-12-29 Winter No Holiday       7663      0        0       2.20 
+10 2018-01-03 Winter No Holiday       6512      0        0      -4.48 
+# ℹ 80 more rows
 # ℹ 5 more variables: mean_humidity &lt;dbl&gt;, mean_wind_speed &lt;dbl&gt;,
 #   mean_visibility &lt;dbl&gt;, mean_dew_point &lt;dbl&gt;, mean_solar_rad &lt;dbl&gt;</code></pre>
 </div>
 </div>
-<p>Above, we can see the heads of our training and test data sets. Using the tidymodels package, we split 75% of our bike rental data into the training set, which we will use to train our models, and the remaining 25% of the data makes up the test set, which will be used to test how effective our models are. The split was stratified by the season variable, so each data set will include a proportional number of observations from each season. Our training data set has 273 observations, while our test data set has 92.</p>
+<p>Above, we can see the heads of our training and test data sets. Using the tidymodels package, we split 75% of our bike rental data into the training set, which we will use to train our models, and the remaining 25% of the data makes up the test set, which will be used to test how effective our models are. The split was stratified by the season variable, so each data set will include a proportional number of observations from each season. Our training data set has 263 observations, while our test data set has 90</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co"># want to create a 10 fold CV split on our training data</span></span>
-<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a><span class="co"># create a function to do so (same as in notes from github pages)</span></span>
-<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a>get_cv_splits <span class="ot">&lt;-</span> <span class="cf">function</span>(data, num_folds){</span>
-<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#get fold size</span></span>
-<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>  size_fold <span class="ot">&lt;-</span> <span class="fu">floor</span>(<span class="fu">nrow</span>(data)<span class="sc">/</span>num_folds)</span>
-<span id="cb88-6"><a href="#cb88-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#get random indices to subset the data with</span></span>
-<span id="cb88-7"><a href="#cb88-7" aria-hidden="true" tabindex="-1"></a>  random_indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(data), <span class="at">size =</span> <span class="fu">nrow</span>(data), <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb88-8"><a href="#cb88-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#create a list to save our folds in</span></span>
-<span id="cb88-9"><a href="#cb88-9" aria-hidden="true" tabindex="-1"></a>  folds <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb88-10"><a href="#cb88-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">#now cycle through our random indices vector and take the appropriate observations to each fold</span></span>
-<span id="cb88-11"><a href="#cb88-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>num_folds){</span>
-<span id="cb88-12"><a href="#cb88-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="sc">&lt;</span> num_folds) {</span>
-<span id="cb88-13"><a href="#cb88-13" aria-hidden="true" tabindex="-1"></a>      fold_index <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> (i<span class="dv">-1</span>)<span class="sc">*</span>size_fold <span class="sc">+</span><span class="dv">1</span>, <span class="at">to =</span> i<span class="sc">*</span>size_fold, <span class="at">by =</span> <span class="dv">1</span>)</span>
-<span id="cb88-14"><a href="#cb88-14" aria-hidden="true" tabindex="-1"></a>      folds[[i]] <span class="ot">&lt;-</span> data[random_indices[fold_index], ]</span>
-<span id="cb88-15"><a href="#cb88-15" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb88-16"><a href="#cb88-16" aria-hidden="true" tabindex="-1"></a>      fold_index <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> (i<span class="dv">-1</span>)<span class="sc">*</span>size_fold <span class="sc">+</span><span class="dv">1</span>, <span class="at">to =</span> <span class="fu">length</span>(random_indices), <span class="at">by =</span> <span class="dv">1</span>)</span>
-<span id="cb88-17"><a href="#cb88-17" aria-hidden="true" tabindex="-1"></a>      folds[[i]] <span class="ot">&lt;-</span> data[random_indices[fold_index], ]</span>
-<span id="cb88-18"><a href="#cb88-18" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb88-19"><a href="#cb88-19" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb88-20"><a href="#cb88-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(folds)</span>
-<span id="cb88-21"><a href="#cb88-21" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb88-22"><a href="#cb88-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb88-23"><a href="#cb88-23" aria-hidden="true" tabindex="-1"></a><span class="co"># save the results in folds</span></span>
-<span id="cb88-24"><a href="#cb88-24" aria-hidden="true" tabindex="-1"></a>folds <span class="ot">&lt;-</span> <span class="fu">get_cv_splits</span>(bike_train, <span class="dv">10</span>)</span>
-<span id="cb88-25"><a href="#cb88-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb88-26"><a href="#cb88-26" aria-hidden="true" tabindex="-1"></a><span class="co"># view the 10 fold CV</span></span>
-<span id="cb88-27"><a href="#cb88-27" aria-hidden="true" tabindex="-1"></a>folds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="co"># want to create a 10 fold CV split on our training data</span></span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a><span class="co"># create a function to do so (same as in notes from github pages)</span></span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>get_cv_splits <span class="ot">&lt;-</span> <span class="cf">function</span>(data, num_folds){</span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#get fold size</span></span>
+<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a>  size_fold <span class="ot">&lt;-</span> <span class="fu">floor</span>(<span class="fu">nrow</span>(data)<span class="sc">/</span>num_folds)</span>
+<span id="cb92-6"><a href="#cb92-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#get random indices to subset the data with</span></span>
+<span id="cb92-7"><a href="#cb92-7" aria-hidden="true" tabindex="-1"></a>  random_indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(data), <span class="at">size =</span> <span class="fu">nrow</span>(data), <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb92-8"><a href="#cb92-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#create a list to save our folds in</span></span>
+<span id="cb92-9"><a href="#cb92-9" aria-hidden="true" tabindex="-1"></a>  folds <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb92-10"><a href="#cb92-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">#now cycle through our random indices vector and take the appropriate observations to each fold</span></span>
+<span id="cb92-11"><a href="#cb92-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>num_folds){</span>
+<span id="cb92-12"><a href="#cb92-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="sc">&lt;</span> num_folds) {</span>
+<span id="cb92-13"><a href="#cb92-13" aria-hidden="true" tabindex="-1"></a>      fold_index <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> (i<span class="dv">-1</span>)<span class="sc">*</span>size_fold <span class="sc">+</span><span class="dv">1</span>, <span class="at">to =</span> i<span class="sc">*</span>size_fold, <span class="at">by =</span> <span class="dv">1</span>)</span>
+<span id="cb92-14"><a href="#cb92-14" aria-hidden="true" tabindex="-1"></a>      folds[[i]] <span class="ot">&lt;-</span> data[random_indices[fold_index], ]</span>
+<span id="cb92-15"><a href="#cb92-15" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb92-16"><a href="#cb92-16" aria-hidden="true" tabindex="-1"></a>      fold_index <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> (i<span class="dv">-1</span>)<span class="sc">*</span>size_fold <span class="sc">+</span><span class="dv">1</span>, <span class="at">to =</span> <span class="fu">length</span>(random_indices), <span class="at">by =</span> <span class="dv">1</span>)</span>
+<span id="cb92-17"><a href="#cb92-17" aria-hidden="true" tabindex="-1"></a>      folds[[i]] <span class="ot">&lt;-</span> data[random_indices[fold_index], ]</span>
+<span id="cb92-18"><a href="#cb92-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb92-19"><a href="#cb92-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb92-20"><a href="#cb92-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(folds)</span>
+<span id="cb92-21"><a href="#cb92-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb92-22"><a href="#cb92-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-23"><a href="#cb92-23" aria-hidden="true" tabindex="-1"></a><span class="co"># save the results in folds</span></span>
+<span id="cb92-24"><a href="#cb92-24" aria-hidden="true" tabindex="-1"></a>folds <span class="ot">&lt;-</span> <span class="fu">get_cv_splits</span>(bike_train, <span class="dv">10</span>)</span>
+<span id="cb92-25"><a href="#cb92-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb92-26"><a href="#cb92-26" aria-hidden="true" tabindex="-1"></a><span class="co"># view the 10 fold CV</span></span>
+<span id="cb92-27"><a href="#cb92-27" aria-hidden="true" tabindex="-1"></a>folds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[1]]
-# A tibble: 27 × 12
-# Groups:   date, season [27]
+# A tibble: 26 × 12
+# Groups:   date, season [26]
    date       season holiday    bike_count rainfall snowfall mean_temp
    &lt;date&gt;     &lt;fct&gt;  &lt;fct&gt;           &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
- 1 2018-07-08 Summer No Holiday      30080      0          0     23.0 
- 2 2018-11-28 Autumn No Holiday      16524      0          0      5.30
- 3 2018-09-02 Autumn No Holiday      26881      0          0     25.0 
- 4 2018-03-14 Spring No Holiday      19180      0          0     16.8 
- 5 2018-06-09 Summer No Holiday      25911      0.5        0     23.7 
- 6 2018-10-28 Autumn No Holiday      11589      5.5        0      8.41
- 7 2018-09-18 Autumn No Holiday          0      0          0     21.8 
- 8 2018-02-17 Winter Holiday          3118      0          0     -2.89
- 9 2018-07-25 Summer No Holiday      25918      0          0     30.3 
-10 2018-10-15 Autumn No Holiday      26198      0          0     15.1 
-# ℹ 17 more rows
+ 1 2018-03-29 Spring No Holiday      17450      0        0       15.5 
+ 2 2018-05-23 Spring No Holiday      27674     10        0       17.5 
+ 3 2018-01-19 Winter No Holiday       7472      0        0        1.05
+ 4 2018-03-13 Spring No Holiday      15963      0        0       11.6 
+ 5 2018-04-01 Spring No Holiday      17388      0        0       15.2 
+ 6 2018-04-09 Spring No Holiday      19082      0        0        7.48
+ 7 2017-12-12 Winter No Holiday       5496      0        0       -9.47
+ 8 2018-01-09 Winter No Holiday       5500      0       10.8     -3.87
+ 9 2017-12-16 Winter No Holiday       4632      0        0       -5.29
+10 2018-09-03 Autumn No Holiday      10802     34.5      0       23.6 
+# ℹ 16 more rows
 # ℹ 5 more variables: mean_humidity &lt;dbl&gt;, mean_wind_speed &lt;dbl&gt;,
 #   mean_visibility &lt;dbl&gt;, mean_dew_point &lt;dbl&gt;, mean_solar_rad &lt;dbl&gt;
 
 [[2]]
-# A tibble: 27 × 12
-# Groups:   date, season [27]
+# A tibble: 26 × 12
+# Groups:   date, season [26]
    date       season holiday    bike_count rainfall snowfall mean_temp
    &lt;date&gt;     &lt;fct&gt;  &lt;fct&gt;           &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
- 1 2018-11-20 Autumn No Holiday      19127      0          0     6.23 
- 2 2018-04-08 Spring No Holiday       6666      3          0     3.81 
- 3 2017-12-05 Winter No Holiday       8307      0          0    -4.46 
- 4 2018-04-09 Spring No Holiday      19082      0          0     7.48 
- 5 2018-11-22 Autumn No Holiday      16496      0          0     2.65 
- 6 2018-09-27 Autumn No Holiday      30789      0          0    18.8  
- 7 2018-08-03 Summer No Holiday      20794      0          0    33.2  
- 8 2018-06-01 Summer No Holiday      31928      0          0    23.7  
- 9 2018-07-11 Summer No Holiday      24135      3.5        0    26.6  
-10 2017-12-09 Winter No Holiday       7233      0          0    -0.846
-# ℹ 17 more rows
+ 1 2018-08-26 Summer No Holiday      19310      2        0       23.3 
+ 2 2018-03-12 Spring No Holiday      13339      0        0        7.79
+ 3 2018-09-27 Autumn No Holiday      30789      0        0       18.8 
+ 4 2018-01-24 Winter No Holiday       3154      0       19.7    -14.1 
+ 5 2018-07-01 Summer No Holiday       3231     81        0       22.0 
+ 6 2018-03-19 Spring No Holiday       8968      1.5      0        8.02
+ 7 2018-09-02 Autumn No Holiday      26881      0        0       25.0 
+ 8 2018-03-27 Spring No Holiday      14710      0        0       13.1 
+ 9 2018-06-27 Summer No Holiday      29755      1        0       22.2 
+10 2018-03-06 Spring No Holiday      12003      0        0        4.29
+# ℹ 16 more rows
 # ℹ 5 more variables: mean_humidity &lt;dbl&gt;, mean_wind_speed &lt;dbl&gt;,
 #   mean_visibility &lt;dbl&gt;, mean_dew_point &lt;dbl&gt;, mean_solar_rad &lt;dbl&gt;
 
 [[3]]
-# A tibble: 27 × 12
-# Groups:   date, season [27]
+# A tibble: 26 × 12
+# Groups:   date, season [26]
    date       season holiday    bike_count rainfall snowfall mean_temp
    &lt;date&gt;     &lt;fct&gt;  &lt;fct&gt;           &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
- 1 2018-07-02 Summer No Holiday       5240     61.5      0     22.4   
- 2 2018-09-25 Autumn Holiday         23350      0        0     17.5   
- 3 2018-05-01 Spring Holiday         26820      0        0     20.3   
- 4 2018-01-27 Winter No Holiday       2693      0        4.4  -10.4   
- 5 2018-04-29 Spring No Holiday      25349      0        0     15.9   
- 6 2017-12-04 Winter No Holiday       8729      0.1      0     -0.304 
- 7 2017-12-06 Winter No Holiday       6669      1.3      8.6    0.0458
- 8 2018-10-13 Autumn No Holiday      25542      0        0     12.4   
- 9 2018-04-27 Spring No Holiday      25861      0        0     15.6   
-10 2018-05-18 Spring No Holiday      16087      7.5      0     16.9   
-# ℹ 17 more rows
+ 1 2018-04-29 Spring No Holiday      25349        0      0       15.9 
+ 2 2018-04-08 Spring No Holiday       6666        3      0        3.81
+ 3 2018-11-13 Autumn No Holiday      21992        0      0        8.76
+ 4 2018-04-13 Spring No Holiday      23240        0      0       14.3 
+ 5 2018-04-14 Spring No Holiday       6980        9      0        9.59
+ 6 2018-09-11 Autumn No Holiday      31694        0      0       21.6 
+ 7 2018-01-29 Winter No Holiday       4088        0      0       -8.52
+ 8 2018-11-14 Autumn No Holiday      22707        0      0        9.70
+ 9 2018-01-26 Winter No Holiday       2931        0     10.3    -14.7 
+10 2018-02-05 Winter No Holiday       3932        0      0       -9.4 
+# ℹ 16 more rows
 # ℹ 5 more variables: mean_humidity &lt;dbl&gt;, mean_wind_speed &lt;dbl&gt;,
 #   mean_visibility &lt;dbl&gt;, mean_dew_point &lt;dbl&gt;, mean_solar_rad &lt;dbl&gt;
 
 [[4]]
-# A tibble: 27 × 12
-# Groups:   date, season [27]
+# A tibble: 26 × 12
+# Groups:   date, season [26]
    date       season holiday    bike_count rainfall snowfall mean_temp
    &lt;date&gt;     &lt;fct&gt;  &lt;fct&gt;           &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
- 1 2018-05-22 Spring Holiday         13790      9        0       18.2 
- 2 2018-03-07 Spring No Holiday      11170      0        0        6.19
- 3 2018-05-12 Spring No Holiday       3034     31.5      0       14.2 
- 4 2018-11-17 Autumn No Holiday      15689      0        0        4.98
- 5 2018-10-19 Autumn No Holiday      27437      0        0       13.1 
- 6 2018-02-14 Winter No Holiday       6771      0        0        3.60
- 7 2018-03-29 Spring No Holiday      17450      0        0       15.5 
- 8 2017-12-10 Winter No Holiday       3453      4.1     32.5      1.19
- 9 2018-08-08 Summer No Holiday      23880      0        0       30.9 
-10 2018-08-20 Summer No Holiday      26827      0        0       29.0 
-# ℹ 17 more rows
+ 1 2018-07-06 Summer No Holiday      33676      0        0       24.1 
+ 2 2018-02-23 Winter No Holiday       5797      4.1     44.7      3.95
+ 3 2017-12-26 Winter No Holiday       5605      0        0       -3.27
+ 4 2018-11-16 Autumn No Holiday      20660      0        0        9.01
+ 5 2018-04-10 Spring No Holiday      16696      5        0       14.7 
+ 6 2018-10-05 Autumn No Holiday       4522     35.5      0       17.1 
+ 7 2018-10-29 Autumn No Holiday      19877      0        0        7.40
+ 8 2018-07-18 Summer No Holiday      27896      0        0       28.2 
+ 9 2018-09-25 Autumn Holiday         23350      0        0       17.5 
+10 2018-05-12 Spring No Holiday       3034     31.5      0       14.2 
+# ℹ 16 more rows
 # ℹ 5 more variables: mean_humidity &lt;dbl&gt;, mean_wind_speed &lt;dbl&gt;,
 #   mean_visibility &lt;dbl&gt;, mean_dew_point &lt;dbl&gt;, mean_solar_rad &lt;dbl&gt;
 
 [[5]]
-# A tibble: 27 × 12
-# Groups:   date, season [27]
+# A tibble: 26 × 12
+# Groups:   date, season [26]
    date       season holiday    bike_count rainfall snowfall mean_temp
    &lt;date&gt;     &lt;fct&gt;  &lt;fct&gt;           &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
- 1 2018-11-24 Autumn No Holiday       6477     10.9     78.7      2.4 
- 2 2018-03-22 Spring No Holiday      14007      0        0        4.85
- 3 2018-02-05 Winter No Holiday       3932      0        0       -9.4 
- 4 2018-08-14 Summer No Holiday      23836      0        0       31.5 
- 5 2018-11-21 Autumn No Holiday      15732      1.2      0        6.25
- 6 2018-02-26 Winter No Holiday       9247      0        0        2.72
- 7 2018-03-15 Spring No Holiday       6227     27        0       13   
- 8 2018-06-30 Summer No Holiday      20479     14.5      0       24.4 
- 9 2018-07-20 Summer No Holiday      26699      0        0       29.4 
-10 2018-01-15 Winter No Holiday       6334      0.2      0        4.71
-# ℹ 17 more rows
+ 1 2018-05-19 Spring No Holiday      30994      0          0     17.3 
+ 2 2018-07-07 Summer No Holiday      31076      0          0     23.8 
+ 3 2018-08-21 Summer No Holiday      25133      5          0     26.8 
+ 4 2018-05-01 Spring Holiday         26820      0          0     20.3 
+ 5 2018-10-01 Autumn No Holiday      27909      0          0     15.4 
+ 6 2018-06-13 Summer No Holiday      36149      0          0     22.0 
+ 7 2018-03-20 Spring No Holiday      11515      0          0      5.04
+ 8 2018-05-28 Spring No Holiday      31020      0          0     22.0 
+ 9 2018-11-27 Autumn No Holiday      16282      0          0      7.07
+10 2018-10-28 Autumn No Holiday      11589      5.5        0      8.41
+# ℹ 16 more rows
 # ℹ 5 more variables: mean_humidity &lt;dbl&gt;, mean_wind_speed &lt;dbl&gt;,
 #   mean_visibility &lt;dbl&gt;, mean_dew_point &lt;dbl&gt;, mean_solar_rad &lt;dbl&gt;
 
 [[6]]
-# A tibble: 27 × 12
-# Groups:   date, season [27]
+# A tibble: 26 × 12
+# Groups:   date, season [26]
    date       season holiday    bike_count rainfall snowfall mean_temp
    &lt;date&gt;     &lt;fct&gt;  &lt;fct&gt;           &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
- 1 2018-10-12 Autumn No Holiday      26237        0        0    10.8  
- 2 2018-03-26 Spring No Holiday      13084        0        0    10.8  
- 3 2018-09-12 Autumn No Holiday      31809        0        0    22.5  
- 4 2018-02-21 Winter No Holiday       7491        0        0    -0.917
- 5 2017-12-01 Winter No Holiday       9539        0        0    -2.45 
- 6 2018-06-14 Summer No Holiday      23818       29        0    21.7  
- 7 2018-04-16 Spring No Holiday      23198        0        0    11.4  
- 8 2017-12-26 Winter No Holiday       5605        0        0    -3.27 
- 9 2018-09-20 Autumn No Holiday      14282        5        0    19.0  
-10 2018-02-11 Winter No Holiday       2850        0        0    -5.99 
-# ℹ 17 more rows
+ 1 2018-06-14 Summer No Holiday      23818     29          0     21.7 
+ 2 2018-09-05 Autumn No Holiday      31114      0          0     23.8 
+ 3 2018-03-05 Spring No Holiday       8597     12.5        0      6.04
+ 4 2018-04-04 Spring No Holiday      19995     18.6        0     13.7 
+ 5 2018-08-07 Summer No Holiday      23806      0          0     30.5 
+ 6 2018-10-06 Autumn No Holiday      16037     35.5        0     18.6 
+ 7 2018-03-03 Spring No Holiday      12191      0          0      7.18
+ 8 2018-06-10 Summer No Holiday      29342      0.5        0     21.3 
+ 9 2018-02-15 Winter Holiday          3484      0          0     -0.45
+10 2018-03-28 Spring No Holiday      17295      0          0     14.0 
+# ℹ 16 more rows
 # ℹ 5 more variables: mean_humidity &lt;dbl&gt;, mean_wind_speed &lt;dbl&gt;,
 #   mean_visibility &lt;dbl&gt;, mean_dew_point &lt;dbl&gt;, mean_solar_rad &lt;dbl&gt;
 
 [[7]]
-# A tibble: 27 × 12
-# Groups:   date, season [27]
+# A tibble: 26 × 12
+# Groups:   date, season [26]
    date       season holiday    bike_count rainfall snowfall mean_temp
    &lt;date&gt;     &lt;fct&gt;  &lt;fct&gt;           &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
- 1 2018-05-14 Spring No Holiday      27793      0        0       17.7 
- 2 2018-10-05 Autumn No Holiday       4522     35.5      0       17.1 
- 3 2018-01-10 Winter No Holiday       4161      0.8     10.2     -7.03
- 4 2018-03-27 Spring No Holiday      14710      0        0       13.1 
- 5 2018-07-09 Summer No Holiday       6191      8.5      0       21.0 
- 6 2018-01-24 Winter No Holiday       3154      0       19.7    -14.1 
- 7 2018-08-18 Summer No Holiday      26398      0        0       26.5 
- 8 2018-07-14 Summer No Holiday      25814      0        0       27.9 
- 9 2018-06-28 Summer No Holiday      21647     26.5      0       23.4 
-10 2018-06-29 Summer No Holiday      30297      6.5      0       24.7 
-# ℹ 17 more rows
+ 1 2018-01-27 Winter No Holiday       2693        0      4.4   -10.4  
+ 2 2018-10-27 Autumn No Holiday      18398        0      0       8.91 
+ 3 2018-02-20 Winter No Holiday       7955        0      0       1.10 
+ 4 2018-09-12 Autumn No Holiday      31809        0      0      22.5  
+ 5 2018-07-26 Summer No Holiday      24915        0      0      30.0  
+ 6 2017-12-21 Winter No Holiday       5734        0     38.9    -0.846
+ 7 2018-06-11 Summer No Holiday      24832        4      0      20.6  
+ 8 2018-01-11 Winter No Holiday       4017        0      0     -10.8  
+ 9 2018-04-05 Spring No Holiday       2596       10      0       7.80 
+10 2018-11-26 Autumn No Holiday      17162        0      2.9     6.32 
+# ℹ 16 more rows
 # ℹ 5 more variables: mean_humidity &lt;dbl&gt;, mean_wind_speed &lt;dbl&gt;,
 #   mean_visibility &lt;dbl&gt;, mean_dew_point &lt;dbl&gt;, mean_solar_rad &lt;dbl&gt;
 
 [[8]]
-# A tibble: 27 × 12
-# Groups:   date, season [27]
+# A tibble: 26 × 12
+# Groups:   date, season [26]
    date       season holiday    bike_count rainfall snowfall mean_temp
    &lt;date&gt;     &lt;fct&gt;  &lt;fct&gt;           &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
- 1 2018-08-06 Summer No Holiday      19171      6.5      0     30.7   
- 2 2018-07-07 Summer No Holiday      31076      0        0     23.8   
- 3 2018-01-31 Winter No Holiday       3830      0       64.8   -2.19  
- 4 2018-01-07 Winter No Holiday       4714      0        0     -1.21  
- 5 2018-01-14 Winter No Holiday       4225      0        0      0.0208
- 6 2018-10-08 Autumn No Holiday      29362      0        0     14.7   
- 7 2018-01-21 Winter No Holiday       4973      0        0      0.392 
- 8 2018-04-22 Spring No Holiday       6852     13.5      0     16.0   
- 9 2018-01-17 Winter No Holiday       6292      0        0      4.55  
-10 2018-03-17 Spring No Holiday      15389      0        0      6.38  
-# ℹ 17 more rows
+ 1 2018-09-22 Autumn No Holiday      26398      6.5      0      21.0  
+ 2 2017-12-30 Winter No Holiday       4027      0.5      0       1.31 
+ 3 2018-02-25 Winter No Holiday       6500      0        0       1.92 
+ 4 2018-02-21 Winter No Holiday       7491      0        0      -0.917
+ 5 2018-02-14 Winter No Holiday       6771      0        0       3.60 
+ 6 2018-02-24 Winter No Holiday       6356      0        0       2.76 
+ 7 2017-12-23 Winter No Holiday       6624      0        0       6.13 
+ 8 2018-10-03 Autumn Holiday         30349      0        0      17.2  
+ 9 2018-11-25 Autumn No Holiday      11212      0       41.4     4.86 
+10 2018-02-04 Winter No Holiday       2487      0        0      -9.52 
+# ℹ 16 more rows
 # ℹ 5 more variables: mean_humidity &lt;dbl&gt;, mean_wind_speed &lt;dbl&gt;,
 #   mean_visibility &lt;dbl&gt;, mean_dew_point &lt;dbl&gt;, mean_solar_rad &lt;dbl&gt;
 
 [[9]]
-# A tibble: 27 × 12
-# Groups:   date, season [27]
+# A tibble: 26 × 12
+# Groups:   date, season [26]
    date       season holiday    bike_count rainfall snowfall mean_temp
    &lt;date&gt;     &lt;fct&gt;  &lt;fct&gt;           &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
- 1 2018-11-04 Autumn No Holiday      20471      0          0     11.7 
- 2 2018-04-13 Spring No Holiday      23240      0          0     14.3 
- 3 2018-07-10 Summer No Holiday      20641     21.5        0     23.3 
- 4 2018-02-07 Winter No Holiday       4697      0          0     -8.32
- 5 2018-09-15 Autumn No Holiday      25079      0.2        0     23.2 
- 6 2018-11-18 Autumn No Holiday      14319      0          0      5.88
- 7 2018-05-04 Spring No Holiday      26670      0          0     13.8 
- 8 2018-07-17 Summer No Holiday      28435      0          0     28.1 
- 9 2018-05-21 Spring No Holiday      31236      0          0     17.7 
-10 2018-09-19 Autumn No Holiday          0      0.2        0     22.2 
-# ℹ 17 more rows
+ 1 2018-08-08 Summer No Holiday      23880        0        0     30.9 
+ 2 2018-07-19 Summer No Holiday      27820        0        0     28.6 
+ 3 2018-06-02 Summer No Holiday      30693        0        0     23.5 
+ 4 2018-04-27 Spring No Holiday      25861        0        0     15.6 
+ 5 2018-04-03 Spring No Holiday      21015        0        0     18.0 
+ 6 2018-02-02 Winter No Holiday       5954        0        0     -2.65
+ 7 2018-07-25 Summer No Holiday      25918        0        0     30.3 
+ 8 2018-04-20 Spring No Holiday      22593        0        0     18.1 
+ 9 2018-10-21 Autumn No Holiday      23906        0        0     13.4 
+10 2018-10-30 Autumn No Holiday      20822        0        0      5.89
+# ℹ 16 more rows
 # ℹ 5 more variables: mean_humidity &lt;dbl&gt;, mean_wind_speed &lt;dbl&gt;,
 #   mean_visibility &lt;dbl&gt;, mean_dew_point &lt;dbl&gt;, mean_solar_rad &lt;dbl&gt;
 
 [[10]]
-# A tibble: 30 × 12
-# Groups:   date, season [30]
+# A tibble: 29 × 12
+# Groups:   date, season [29]
    date       season holiday    bike_count rainfall snowfall mean_temp
    &lt;date&gt;     &lt;fct&gt;  &lt;fct&gt;           &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
- 1 2018-05-10 Spring No Holiday          0      0          0     15.5 
- 2 2018-03-21 Spring No Holiday       7384      1          0      2.13
- 3 2018-04-30 Spring No Holiday      25462      0          0     18.8 
- 4 2018-06-03 Summer No Holiday      29761      0          0     23.7 
- 5 2018-07-19 Summer No Holiday      27820      0          0     28.6 
- 6 2018-06-13 Summer No Holiday      36149      0          0     22.0 
- 7 2018-04-07 Spring No Holiday      11159      0.2        0      4.21
- 8 2018-04-25 Spring No Holiday      26285      0          0     14.2 
- 9 2018-05-06 Spring No Holiday      14556     22          0     16.9 
-10 2018-03-16 Spring No Holiday      15277      0          0      7.35
-# ℹ 20 more rows
+ 1 2018-06-22 Summer No Holiday      34079      0        0       24.7 
+ 2 2018-04-07 Spring No Holiday      11159      0.2      0        4.21
+ 3 2018-03-15 Spring No Holiday       6227     27        0       13   
+ 4 2018-10-11 Autumn No Holiday      24526      0        0        9.68
+ 5 2018-08-30 Summer No Holiday      20959      9.5      0       25.4 
+ 6 2017-12-07 Winter No Holiday       8549      0       10.4      1.09
+ 7 2018-05-31 Spring No Holiday      31681      0        0       20.5 
+ 8 2018-09-01 Autumn No Holiday      26010      0        0       25.5 
+ 9 2018-04-17 Spring No Holiday      22234      0        0       12.8 
+10 2018-04-24 Spring No Holiday      20144      3        0       12.2 
+# ℹ 19 more rows
 # ℹ 5 more variables: mean_humidity &lt;dbl&gt;, mean_wind_speed &lt;dbl&gt;,
 #   mean_visibility &lt;dbl&gt;, mean_dew_point &lt;dbl&gt;, mean_solar_rad &lt;dbl&gt;</code></pre>
 </div>
 </div>
-<p>In the above code, we created a function that allows us to do cross validation on a data set with a certain number of folds. We then used this to do 10 fold cross validation on the training set from our bike rental data, with the heads of each fold returned above. Each fold contains 27 observations, except the tenth fold, which contains 30.</p>
+<p>In the above code, we created a function that allows us to do cross validation on a data set with a certain number of folds. We then used this to do 10 fold cross validation on the training set from our bike rental data, with the heads of each fold returned above. Each fold contains 26 observations, except the tenth fold, which contains 29.</p>
 </section>
 <section id="fitting-mlr-models" class="level2">
 <h2 class="anchored" data-anchor-id="fitting-mlr-models">Fitting MLR Models</h2>
+<section id="recipe-1" class="level3">
+<h3 class="anchored" data-anchor-id="recipe-1">Recipe 1:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create some recipes with tidymodels</span></span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a><span class="co"># first recipe: </span></span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a>bike_recipe_1 <span class="ot">&lt;-</span> <span class="fu">recipe</span>(bike_count <span class="sc">~</span> . , <span class="at">data =</span> bike_train) <span class="sc">|&gt;</span> </span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#obtain day of week from data variable</span></span>
+<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_date</span>(date, <span class="at">features =</span> <span class="st">"dow"</span>, <span class="at">keep_original_cols =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb94-6"><a href="#cb94-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate to create factor examining if it is a weekday or weekend</span></span>
+<span id="cb94-7"><a href="#cb94-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_mutate</span>(<span class="at">day_type =</span> <span class="fu">factor</span>(<span class="fu">ifelse</span>(date_dow <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Sat"</span>, <span class="st">"Sun"</span>), <span class="st">"Weekend"</span>, <span class="st">"Weekday"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb94-8"><a href="#cb94-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove the day of week variable</span></span>
+<span id="cb94-9"><a href="#cb94-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(date_dow) <span class="sc">|&gt;</span> </span>
+<span id="cb94-10"><a href="#cb94-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># normalize all numeric variables</span></span>
+<span id="cb94-11"><a href="#cb94-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_numeric</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb94-12"><a href="#cb94-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create dummy variables for factors</span></span>
+<span id="cb94-13"><a href="#cb94-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(season, holiday, day_type)</span>
+<span id="cb94-14"><a href="#cb94-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-15"><a href="#cb94-15" aria-hidden="true" tabindex="-1"></a><span class="co"># view results</span></span>
+<span id="cb94-16"><a href="#cb94-16" aria-hidden="true" tabindex="-1"></a>bike_recipe_1 <span class="sc">|&gt;</span> </span>
+<span id="cb94-17"><a href="#cb94-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prep</span>(<span class="at">training =</span> bike_train) <span class="sc">|&gt;</span> </span>
+<span id="cb94-18"><a href="#cb94-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bake</span>(bike_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 263 × 14
+   rainfall snowfall mean_temp mean_humidity mean_wind_speed mean_visibility
+      &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt;           &lt;dbl&gt;
+ 1   -0.309   -0.210     1.08          0.217          -0.883          0.773 
+ 2   -0.309   -0.210     1.04         -0.224          -0.386          1.09  
+ 3    2.64    -0.210     0.924         1.61           -1.13           0.0873
+ 4   -0.309   -0.210     0.944         0.256           1.29           1.01  
+ 5   -0.309   -0.210     0.762        -0.612          -0.113          1.07  
+ 6   -0.309   -0.210     0.784        -0.560          -0.841          1.10  
+ 7   -0.309   -0.210     0.751        -0.659          -0.435          1.10  
+ 8   -0.309   -0.210     0.833        -0.397          -0.694          1.08  
+ 9   -0.309   -0.210     0.911         0.289          -0.855          1.07  
+10   -0.266   -0.210     0.912         0.614          -0.722          1.01  
+# ℹ 253 more rows
+# ℹ 8 more variables: mean_dew_point &lt;dbl&gt;, mean_solar_rad &lt;dbl&gt;,
+#   bike_count &lt;dbl&gt;, season_Spring &lt;dbl&gt;, season_Summer &lt;dbl&gt;,
+#   season_Winter &lt;dbl&gt;, holiday_No.Holiday &lt;dbl&gt;, day_type_Weekend &lt;dbl&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="co"># names of variables in recipe 1</span></span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>bike_recipe_1  <span class="sc">|&gt;</span> </span>
+<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prep</span>(<span class="at">training =</span> bike_train) <span class="sc">|&gt;</span> </span>
+<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bake</span>(bike_train) <span class="sc">|&gt;</span> </span>
+<span id="cb96-5"><a href="#cb96-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "rainfall"           "snowfall"           "mean_temp"         
+ [4] "mean_humidity"      "mean_wind_speed"    "mean_visibility"   
+ [7] "mean_dew_point"     "mean_solar_rad"     "bike_count"        
+[10] "season_Spring"      "season_Summer"      "season_Winter"     
+[13] "holiday_No.Holiday" "day_type_Weekend"  </code></pre>
+</div>
+</div>
+<p>Our first recipe with tidymodels has us create a day_type factor variable, created by pulling the day of the week from the date variable using step_date(), and then using step_mutate() to create the day_type variable. All of our numeric variables are standardized, including the outcome variable, bike_count.</p>
+</section>
+<section id="recipe-2" class="level3">
+<h3 class="anchored" data-anchor-id="recipe-2">Recipe 2:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="co"># second recipe: </span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>bike_recipe_2 <span class="ot">&lt;-</span> <span class="fu">recipe</span>(bike_count <span class="sc">~</span> . , <span class="at">data =</span> bike_train) <span class="sc">|&gt;</span> </span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#obtain day of week from data variable</span></span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_date</span>(date, <span class="at">features =</span> <span class="st">"dow"</span>, <span class="at">keep_original_cols =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate to create factor examining if it is a weekday or weekend</span></span>
+<span id="cb98-6"><a href="#cb98-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_mutate</span>(<span class="at">day_type =</span> <span class="fu">factor</span>(<span class="fu">ifelse</span>(date_dow <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Sat"</span>, <span class="st">"Sun"</span>), <span class="st">"Weekend"</span>, <span class="st">"Weekday"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb98-7"><a href="#cb98-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove the day of week variable</span></span>
+<span id="cb98-8"><a href="#cb98-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(date_dow) <span class="sc">|&gt;</span> </span>
+<span id="cb98-9"><a href="#cb98-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># normalize all numeric variables</span></span>
+<span id="cb98-10"><a href="#cb98-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_numeric</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb98-11"><a href="#cb98-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create dummy variables for factors</span></span>
+<span id="cb98-12"><a href="#cb98-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(season, holiday, day_type) <span class="sc">|&gt;</span> </span>
+<span id="cb98-13"><a href="#cb98-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add in interacts between seasons and holiday, seasons and temp, and temp and rainfall</span></span>
+<span id="cb98-14"><a href="#cb98-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_interact</span>(<span class="at">terms =</span> <span class="sc">~</span> <span class="fu">starts_with</span>(<span class="st">"season"</span>)<span class="sc">*</span>holiday_No.Holiday <span class="sc">+</span> </span>
+<span id="cb98-15"><a href="#cb98-15" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">starts_with</span>(<span class="st">"season"</span>)<span class="sc">*</span>mean_temp <span class="sc">+</span> </span>
+<span id="cb98-16"><a href="#cb98-16" aria-hidden="true" tabindex="-1"></a>                  mean_temp<span class="sc">*</span>rainfall)</span>
+<span id="cb98-17"><a href="#cb98-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-18"><a href="#cb98-18" aria-hidden="true" tabindex="-1"></a><span class="co"># view results</span></span>
+<span id="cb98-19"><a href="#cb98-19" aria-hidden="true" tabindex="-1"></a>bike_recipe_2 <span class="sc">|&gt;</span> </span>
+<span id="cb98-20"><a href="#cb98-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prep</span>(<span class="at">training =</span> bike_train) <span class="sc">|&gt;</span> </span>
+<span id="cb98-21"><a href="#cb98-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bake</span>(bike_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 263 × 21
+   rainfall snowfall mean_temp mean_humidity mean_wind_speed mean_visibility
+      &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt;           &lt;dbl&gt;
+ 1   -0.309   -0.210     1.08          0.217          -0.883          0.773 
+ 2   -0.309   -0.210     1.04         -0.224          -0.386          1.09  
+ 3    2.64    -0.210     0.924         1.61           -1.13           0.0873
+ 4   -0.309   -0.210     0.944         0.256           1.29           1.01  
+ 5   -0.309   -0.210     0.762        -0.612          -0.113          1.07  
+ 6   -0.309   -0.210     0.784        -0.560          -0.841          1.10  
+ 7   -0.309   -0.210     0.751        -0.659          -0.435          1.10  
+ 8   -0.309   -0.210     0.833        -0.397          -0.694          1.08  
+ 9   -0.309   -0.210     0.911         0.289          -0.855          1.07  
+10   -0.266   -0.210     0.912         0.614          -0.722          1.01  
+# ℹ 253 more rows
+# ℹ 15 more variables: mean_dew_point &lt;dbl&gt;, mean_solar_rad &lt;dbl&gt;,
+#   bike_count &lt;dbl&gt;, season_Spring &lt;dbl&gt;, season_Summer &lt;dbl&gt;,
+#   season_Winter &lt;dbl&gt;, holiday_No.Holiday &lt;dbl&gt;, day_type_Weekend &lt;dbl&gt;,
+#   season_Spring_x_holiday_No.Holiday &lt;dbl&gt;,
+#   season_Summer_x_holiday_No.Holiday &lt;dbl&gt;,
+#   season_Winter_x_holiday_No.Holiday &lt;dbl&gt;, …</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="co"># names of variables in recipe 2</span></span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>bike_recipe_2  <span class="sc">|&gt;</span> </span>
+<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prep</span>(<span class="at">training =</span> bike_train) <span class="sc">|&gt;</span> </span>
+<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bake</span>(bike_train) <span class="sc">|&gt;</span> </span>
+<span id="cb100-5"><a href="#cb100-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "rainfall"                           "snowfall"                          
+ [3] "mean_temp"                          "mean_humidity"                     
+ [5] "mean_wind_speed"                    "mean_visibility"                   
+ [7] "mean_dew_point"                     "mean_solar_rad"                    
+ [9] "bike_count"                         "season_Spring"                     
+[11] "season_Summer"                      "season_Winter"                     
+[13] "holiday_No.Holiday"                 "day_type_Weekend"                  
+[15] "season_Spring_x_holiday_No.Holiday" "season_Summer_x_holiday_No.Holiday"
+[17] "season_Winter_x_holiday_No.Holiday" "season_Spring_x_mean_temp"         
+[19] "season_Summer_x_mean_temp"          "season_Winter_x_mean_temp"         
+[21] "mean_temp_x_rainfall"              </code></pre>
+</div>
+</div>
+<p>Our second recipe is the same as the first, except it adds interaction terms! We have now added interaction terms for the interaction between the season dummy variables and the holiday dumm variable, the season dummy variables and temperature, and temperature and rainfall.</p>
+</section>
+<section id="recipe-3" class="level3">
+<h3 class="anchored" data-anchor-id="recipe-3">Recipe 3:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="co"># third recipe: </span></span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a>bike_recipe_3 <span class="ot">&lt;-</span> <span class="fu">recipe</span>(bike_count <span class="sc">~</span> . , <span class="at">data =</span> bike_train) <span class="sc">|&gt;</span> </span>
+<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#obtain day of week from data variable</span></span>
+<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_date</span>(date, <span class="at">features =</span> <span class="st">"dow"</span>, <span class="at">keep_original_cols =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate to create factor examining if it is a weekday or weekend</span></span>
+<span id="cb102-6"><a href="#cb102-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_mutate</span>(<span class="at">day_type =</span> <span class="fu">factor</span>(<span class="fu">ifelse</span>(date_dow <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Sat"</span>, <span class="st">"Sun"</span>), <span class="st">"Weekend"</span>, <span class="st">"Weekday"</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb102-7"><a href="#cb102-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove the day of week variable</span></span>
+<span id="cb102-8"><a href="#cb102-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(date_dow) <span class="sc">|&gt;</span> </span>
+<span id="cb102-9"><a href="#cb102-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># normalize all numeric variables</span></span>
+<span id="cb102-10"><a href="#cb102-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_numeric</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb102-11"><a href="#cb102-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create dummy variables for factors</span></span>
+<span id="cb102-12"><a href="#cb102-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(season, holiday, day_type) <span class="sc">|&gt;</span> </span>
+<span id="cb102-13"><a href="#cb102-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add in quadratic terms for numeric predictors</span></span>
+<span id="cb102-14"><a href="#cb102-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_poly</span>(rainfall, snowfall, mean_temp, mean_humidity, mean_wind_speed, mean_dew_point, mean_solar_rad, mean_visibility) <span class="sc">|&gt;</span> </span>
+<span id="cb102-15"><a href="#cb102-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add in interactions between seasons and holiday, seasons and temp, and temp and rainfall</span></span>
+<span id="cb102-16"><a href="#cb102-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_interact</span>(<span class="at">terms =</span> <span class="sc">~</span> <span class="fu">starts_with</span>(<span class="st">"season"</span>)<span class="sc">*</span>holiday_No.Holiday <span class="sc">+</span> </span>
+<span id="cb102-17"><a href="#cb102-17" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">starts_with</span>(<span class="st">"season"</span>)<span class="sc">*</span>mean_temp_poly_1 <span class="sc">+</span> </span>
+<span id="cb102-18"><a href="#cb102-18" aria-hidden="true" tabindex="-1"></a>                  mean_temp_poly_1<span class="sc">*</span>rainfall_poly_1)</span>
+<span id="cb102-19"><a href="#cb102-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb102-20"><a href="#cb102-20" aria-hidden="true" tabindex="-1"></a><span class="co"># view results</span></span>
+<span id="cb102-21"><a href="#cb102-21" aria-hidden="true" tabindex="-1"></a>bike_recipe_3 <span class="sc">|&gt;</span> </span>
+<span id="cb102-22"><a href="#cb102-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prep</span>(<span class="at">training =</span> bike_train) <span class="sc">|&gt;</span> </span>
+<span id="cb102-23"><a href="#cb102-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bake</span>(bike_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 263 × 29
+   bike_count season_Spring season_Summer season_Winter holiday_No.Holiday
+        &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;              &lt;dbl&gt;
+ 1      0.896             0             0             0                  1
+ 2      0.985             0             0             0                  1
+ 3     -0.662             0             0             0                  1
+ 4      1.42              0             0             0                  1
+ 5      1.29              0             0             0                  1
+ 6      1.14              0             0             0                  1
+ 7      1.48              0             0             0                  1
+ 8      1.49              0             0             0                  1
+ 9      1.41              0             0             0                  1
+10      1.12              0             0             0                  1
+# ℹ 253 more rows
+# ℹ 24 more variables: day_type_Weekend &lt;dbl&gt;, rainfall_poly_1 &lt;dbl&gt;,
+#   rainfall_poly_2 &lt;dbl&gt;, snowfall_poly_1 &lt;dbl&gt;, snowfall_poly_2 &lt;dbl&gt;,
+#   mean_temp_poly_1 &lt;dbl&gt;, mean_temp_poly_2 &lt;dbl&gt;, mean_humidity_poly_1 &lt;dbl&gt;,
+#   mean_humidity_poly_2 &lt;dbl&gt;, mean_wind_speed_poly_1 &lt;dbl&gt;,
+#   mean_wind_speed_poly_2 &lt;dbl&gt;, mean_dew_point_poly_1 &lt;dbl&gt;,
+#   mean_dew_point_poly_2 &lt;dbl&gt;, mean_solar_rad_poly_1 &lt;dbl&gt;, …</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="co"># names of variables in recipe 3</span></span>
+<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a>bike_recipe_3  <span class="sc">|&gt;</span> </span>
+<span id="cb104-3"><a href="#cb104-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prep</span>(<span class="at">training =</span> bike_train) <span class="sc">|&gt;</span> </span>
+<span id="cb104-4"><a href="#cb104-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bake</span>(bike_train) <span class="sc">|&gt;</span> </span>
+<span id="cb104-5"><a href="#cb104-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "bike_count"                         "season_Spring"                     
+ [3] "season_Summer"                      "season_Winter"                     
+ [5] "holiday_No.Holiday"                 "day_type_Weekend"                  
+ [7] "rainfall_poly_1"                    "rainfall_poly_2"                   
+ [9] "snowfall_poly_1"                    "snowfall_poly_2"                   
+[11] "mean_temp_poly_1"                   "mean_temp_poly_2"                  
+[13] "mean_humidity_poly_1"               "mean_humidity_poly_2"              
+[15] "mean_wind_speed_poly_1"             "mean_wind_speed_poly_2"            
+[17] "mean_dew_point_poly_1"              "mean_dew_point_poly_2"             
+[19] "mean_solar_rad_poly_1"              "mean_solar_rad_poly_2"             
+[21] "mean_visibility_poly_1"             "mean_visibility_poly_2"            
+[23] "season_Spring_x_holiday_No.Holiday" "season_Summer_x_holiday_No.Holiday"
+[25] "season_Winter_x_holiday_No.Holiday" "season_Spring_x_mean_temp_poly_1"  
+[27] "season_Summer_x_mean_temp_poly_1"   "season_Winter_x_mean_temp_poly_1"  
+[29] "mean_temp_poly_1_x_rainfall_poly_1"</code></pre>
+</div>
+</div>
+<p>Our third and final recipe is similar to our second one, except now we have added quadratic terms for our numeric predictors variables.</p>
+</section>
+<section id="fit-and-compare-the-models" class="level3">
+<h3 class="anchored" data-anchor-id="fit-and-compare-the-models">Fit and Compare the Models</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set the engine for our models to be "lm"</span></span>
+<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a>bike_mod <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"lm"</span>)</span>
+<span id="cb106-4"><a href="#cb106-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb106-5"><a href="#cb106-5" aria-hidden="true" tabindex="-1"></a><span class="co"># create a workflow that adds our recipe and our model with corresponding function</span></span>
+<span id="cb106-6"><a href="#cb106-6" aria-hidden="true" tabindex="-1"></a>bike_workflow_1 <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb106-7"><a href="#cb106-7" aria-hidden="true" tabindex="-1"></a> <span class="fu">add_recipe</span>(bike_recipe_1) <span class="sc">|&gt;</span></span>
+<span id="cb106-8"><a href="#cb106-8" aria-hidden="true" tabindex="-1"></a> <span class="fu">add_model</span>(bike_mod)</span>
+<span id="cb106-9"><a href="#cb106-9" aria-hidden="true" tabindex="-1"></a>bike_workflow_1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow ════════════════════════════════════════════════════════════════════
+Preprocessor: Recipe
+Model: linear_reg()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+5 Recipe Steps
+
+• step_date()
+• step_mutate()
+• step_rm()
+• step_normalize()
+• step_dummy()
+
+── Model ───────────────────────────────────────────────────────────────────────
+Linear Regression Model Specification (regression)
+
+Computational engine: lm </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a>bike_workflow_2 <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">add_recipe</span>(bike_recipe_2) <span class="sc">|&gt;</span></span>
+<span id="cb108-3"><a href="#cb108-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">add_model</span>(bike_mod)</span>
+<span id="cb108-4"><a href="#cb108-4" aria-hidden="true" tabindex="-1"></a>bike_workflow_2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow ════════════════════════════════════════════════════════════════════
+Preprocessor: Recipe
+Model: linear_reg()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+6 Recipe Steps
+
+• step_date()
+• step_mutate()
+• step_rm()
+• step_normalize()
+• step_dummy()
+• step_interact()
+
+── Model ───────────────────────────────────────────────────────────────────────
+Linear Regression Model Specification (regression)
+
+Computational engine: lm </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a>bike_workflow_3 <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span></span>
+<span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">add_recipe</span>(bike_recipe_3) <span class="sc">|&gt;</span></span>
+<span id="cb110-3"><a href="#cb110-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">add_model</span>(bike_mod)</span>
+<span id="cb110-4"><a href="#cb110-4" aria-hidden="true" tabindex="-1"></a>bike_workflow_3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow ════════════════════════════════════════════════════════════════════
+Preprocessor: Recipe
+Model: linear_reg()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+7 Recipe Steps
+
+• step_date()
+• step_mutate()
+• step_rm()
+• step_normalize()
+• step_dummy()
+• step_poly()
+• step_interact()
+
+── Model ───────────────────────────────────────────────────────────────────────
+Linear Regression Model Specification (regression)
+
+Computational engine: lm </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use a 10 fold CV in the training set</span></span>
+<span id="cb112-2"><a href="#cb112-2" aria-hidden="true" tabindex="-1"></a>bike_10_fold <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(bike_train, <span class="dv">10</span>)</span>
+<span id="cb112-3"><a href="#cb112-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb112-4"><a href="#cb112-4" aria-hidden="true" tabindex="-1"></a><span class="co"># get the metrics for the 10 CV fit on recipe 1</span></span>
+<span id="cb112-5"><a href="#cb112-5" aria-hidden="true" tabindex="-1"></a>bike_CV_fits_1 <span class="ot">&lt;-</span> bike_workflow_1 <span class="sc">|&gt;</span></span>
+<span id="cb112-6"><a href="#cb112-6" aria-hidden="true" tabindex="-1"></a> <span class="fu">fit_resamples</span>(bike_10_fold)</span>
+<span id="cb112-7"><a href="#cb112-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb112-8"><a href="#cb112-8" aria-hidden="true" tabindex="-1"></a><span class="co"># get the metrics for the 10 CV fit on recipe 2</span></span>
+<span id="cb112-9"><a href="#cb112-9" aria-hidden="true" tabindex="-1"></a>bike_CV_fits_2 <span class="ot">&lt;-</span> bike_workflow_2 <span class="sc">|&gt;</span></span>
+<span id="cb112-10"><a href="#cb112-10" aria-hidden="true" tabindex="-1"></a> <span class="fu">fit_resamples</span>(bike_10_fold)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>→ A | warning: prediction from rank-deficient fit; consider predict(., rankdeficient="NA")</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>There were issues with some computations   A: x1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>There were issues with some computations   A: x2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get the metrics for the 10 CV fit on recipe 3</span></span>
+<span id="cb117-2"><a href="#cb117-2" aria-hidden="true" tabindex="-1"></a>bike_CV_fits_3 <span class="ot">&lt;-</span> bike_workflow_3 <span class="sc">|&gt;</span></span>
+<span id="cb117-3"><a href="#cb117-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">fit_resamples</span>(bike_10_fold)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>→ A | warning: prediction from rank-deficient fit; consider predict(., rankdeficient="NA")</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>There were issues with some computations   A: x1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>There were issues with some computations   A: x2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb122"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="co"># view the metrics from the three models</span></span>
+<span id="cb122-2"><a href="#cb122-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(bike_CV_fits_1 <span class="sc">|&gt;</span> <span class="fu">collect_metrics</span>(), </span>
+<span id="cb122-3"><a href="#cb122-3" aria-hidden="true" tabindex="-1"></a>      bike_CV_fits_2 <span class="sc">|&gt;</span> <span class="fu">collect_metrics</span>(), </span>
+<span id="cb122-4"><a href="#cb122-4" aria-hidden="true" tabindex="-1"></a>      bike_CV_fits_3 <span class="sc">|&gt;</span> <span class="fu">collect_metrics</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  .metric .estimator  mean     n std_err .config        
+  &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;          
+1 rmse    standard   0.410    10  0.0149 pre0_mod0_post0
+2 rsq     standard   0.834    10  0.0157 pre0_mod0_post0
+3 rmse    standard   0.315    10  0.0252 pre0_mod0_post0
+4 rsq     standard   0.898    10  0.0210 pre0_mod0_post0
+5 rmse    standard   0.306    10  0.0292 pre0_mod0_post0
+6 rsq     standard   0.903    10  0.0234 pre0_mod0_post0</code></pre>
+</div>
+</div>
+<p>Based on the root mean squared error (RMSE) of the training set, the best recipe of the three candidates is recipe 3, with a RMSE = 0.310. The next best is recipe 2, with a RMSE = 0.321. And in third is recipe 1, with a RMSE = 0.412.</p>
+<p>Since recipe 3 produced our ‘best’ model, we will test it with our test set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb124"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb124-1"><a href="#cb124-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit the model from recipe 3</span></span>
+<span id="cb124-2"><a href="#cb124-2" aria-hidden="true" tabindex="-1"></a>bike_fit <span class="ot">&lt;-</span> bike_workflow_3 <span class="sc">|&gt;</span></span>
+<span id="cb124-3"><a href="#cb124-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">fit</span>(bike_train)</span>
+<span id="cb124-4"><a href="#cb124-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb124-5"><a href="#cb124-5" aria-hidden="true" tabindex="-1"></a><span class="co"># see how the model performs on the test data</span></span>
+<span id="cb124-6"><a href="#cb124-6" aria-hidden="true" tabindex="-1"></a>bike_workflow_3 <span class="sc">|&gt;</span></span>
+<span id="cb124-7"><a href="#cb124-7" aria-hidden="true" tabindex="-1"></a> <span class="fu">last_fit</span>(bike_split) <span class="sc">|&gt;</span></span>
+<span id="cb124-8"><a href="#cb124-8" aria-hidden="true" tabindex="-1"></a> <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  .metric .estimator .estimate .config        
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;          
+1 rmse    standard       0.296 pre0_mod0_post0
+2 rsq     standard       0.925 pre0_mod0_post0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb126"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb126-1"><a href="#cb126-1" aria-hidden="true" tabindex="-1"></a><span class="co"># view the final model coefficient table</span></span>
+<span id="cb126-2"><a href="#cb126-2" aria-hidden="true" tabindex="-1"></a>bike_fit <span class="sc">|&gt;</span> </span>
+<span id="cb126-3"><a href="#cb126-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_parsnip</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb126-4"><a href="#cb126-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">tidy</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 29 × 5
+   term               estimate std.error statistic      p.value
+   &lt;chr&gt;                 &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
+ 1 (Intercept)          -0.161    0.173     -0.929 0.354       
+ 2 season_Spring         0.268    0.339      0.790 0.430       
+ 3 season_Summer         1.39     0.406      3.41  0.000757    
+ 4 season_Winter        -0.997    0.306     -3.26  0.00130     
+ 5 holiday_No.Holiday    0.586    0.156      3.77  0.000206    
+ 6 day_type_Weekend     -0.240    0.0413    -5.81  0.0000000206
+ 7 rainfall_poly_1      -2.99     0.863     -3.46  0.000634    
+ 8 rainfall_poly_2       1.50     0.394      3.81  0.000176    
+ 9 snowfall_poly_1      -0.255    0.335     -0.762 0.447       
+10 snowfall_poly_2      -0.200    0.322     -0.622 0.535       
+# ℹ 19 more rows</code></pre>
+</div>
+</div>
+<p>It appears our model does quite well on the test set, with a RMSE = 0.296, even lower than the training set.</p>
+<p>The final model’s coefficient table is the last table output. It includes the parameter estimate, standard error, test statistic, and p-value of every parameter in the model.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
