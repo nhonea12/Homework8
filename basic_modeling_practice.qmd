@@ -30,7 +30,7 @@ str(bike_data)
 The str() function allows us the examine the structure of our data. Here we can see which of our variables are numeric, and which ones are character. We can see the first few observations of each column, so we know whether the values makes sense in context, and we see the number of observations in each column, which is 8760 for every variable in our data set.
 
 ```{r}
-# basic summaru stats of numeric variables
+# basic summary stats of numeric variables
 mean(bike_data$`Rented Bike Count`)
 sd(bike_data$`Rented Bike Count`)
 ```
